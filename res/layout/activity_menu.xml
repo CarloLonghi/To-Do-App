@@ -31,7 +31,7 @@
                 android:id="@+id/newListButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onClick1"
+                android:onClick="onClick"
                 android:text="@string/newList" />
         </RelativeLayout>
 

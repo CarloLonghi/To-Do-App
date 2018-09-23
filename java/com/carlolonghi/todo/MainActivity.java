@@ -53,6 +53,7 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
         this.listTitle=title;
+        setTitle(listTitle.toUpperCase());
 
         //Fill the activity with the correct items
         this.populateItems();

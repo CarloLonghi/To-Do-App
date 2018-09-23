@@ -48,11 +48,13 @@ public class MenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
+        populateLists();
+    }
+
+    private void populateLists(){
         items=new HashMap<>();
         try {
-            FileInputStream inputStream = this.openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (HashMap<String,HashMap<String,Boolean>>) reader.readObject();
+            readItemsFromFile();
             for (String list : items.keySet()) {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(this);
@@ -62,18 +64,9 @@ public class MenuActivity extends Activity {
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.setMargins(48, 48, 48, 0);
                 insertPoint.addView(newItemAddedButton, layoutParams);
-                newItemAddedButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        avoidDoubleClicks(view);
-                        Intent intent = new Intent(view.getContext(), MainActivity.class);
-                        String list = ((Button) view).getText().toString();
-                        intent.putExtra("com.carlolonghi.todo.TITLE", list);
-                        startActivity(intent);
-                    }
-                });
-                inputStream.close();
-                reader.close();
+
+                //Setting the listener for the list buttons
+                newItemAddedButton.setOnClickListener(new ListButtonListener());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,6 +77,11 @@ public class MenuActivity extends Activity {
     protected void onResume(){
         super.onResume();
 
+        items=new HashMap<>();
+        readItemsFromFile();
+    }
+
+    private void readItemsFromFile(){
         items=new HashMap<>();
         try {
             FileInputStream inputStream = this.openFileInput("items.dat");
@@ -97,7 +95,7 @@ public class MenuActivity extends Activity {
         }
     }
 
-    public void onClick1(final View addButton) {
+    public void onClick(final View addButton) {
         addButton.setClickable(false);
 
         //Add the edittext where the user has to type the title of the new list
@@ -126,20 +124,10 @@ public class MenuActivity extends Activity {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.setMargins(48, 48, 48, 0);
-                //newItemAddedButton.setLayoutParams(layoutParams);
                 insertPoint.addView(newItemAddedButton, layoutParams);
 
-                //insertPoint.addView(v2);
-                newItemAddedButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        avoidDoubleClicks(view);
-                        Intent intent = new Intent(view.getContext(), MainActivity.class);
-                        String list = ((Button) view).getText().toString();
-                        intent.putExtra("com.carlolonghi.todo.TITLE", list);
-                        startActivity(intent);
-                    }
-                });
+                //Setting the listener for the list buttons
+                newItemAddedButton.setOnClickListener(new ListButtonListener());
 
                 items.put(newListTitle,new HashMap<String, Boolean>());
                 try {
@@ -152,6 +140,12 @@ public class MenuActivity extends Activity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                //open the list of items
+                Intent intent = new Intent(newItemAddedButton.getContext(), MainActivity.class);
+                String list = ((Button) newItemAddedButton).getText().toString();
+                intent.putExtra("com.carlolonghi.todo.TITLE", list);
+                newItemAddedButton.getContext().startActivity(intent);
             }
         });
     }
