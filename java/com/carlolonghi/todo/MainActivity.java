@@ -158,11 +158,6 @@ public class MainActivity extends Activity {
                 items.put(this.listTitle,tmp);
                 this.updateItemsOnFile(radioButton.getText().toString(),true);
             }
-            //else{
-               // LinkedHashMap<String, Boolean> tmp=items.get(this.listTitle);
-               // tmp.put(radioButton.getText().toString(),false);
-             //   items.put(this.listTitle,tmp);
-            //}
         }
     }
 }
