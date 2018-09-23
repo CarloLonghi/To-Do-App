@@ -47,44 +47,54 @@ public class MenuActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        prefs = getSharedPreferences("com.carlolonghi.todo", MODE_PRIVATE);
 
         items=new HashMap<>();
         try {
-                FileInputStream inputStream = this.openFileInput("items.dat");
-                ObjectInputStream reader = new ObjectInputStream(inputStream);
-                items = (HashMap<String,ArrayList<String>>) reader.readObject();
-                for (String list : items.keySet()) {
-                    ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
-                    Button newItemAddedButton = new Button(this);
-                    newItemAddedButton.setText(list);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT);
-                    layoutParams.setMargins(48, 48, 48, 0);
-                    insertPoint.addView(newItemAddedButton, layoutParams);
-                    newItemAddedButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            avoidDoubleClicks(view);
-                            Intent intent = new Intent(view.getContext(), MainActivity.class);
-                            String list = ((Button) view).getText().toString();
-                            intent.putExtra("com.carlolonghi.todo.TITLE", list);
-                            startActivity(intent);
-                        }
-                    });
-                    inputStream.close();
-                    reader.close();
-                }
+            FileInputStream inputStream = this.openFileInput("items.dat");
+            ObjectInputStream reader = new ObjectInputStream(inputStream);
+            items = (HashMap<String,ArrayList<String>>) reader.readObject();
+            for (String list : items.keySet()) {
+                ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
+                Button newItemAddedButton = new Button(this);
+                newItemAddedButton.setText(list);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(48, 48, 48, 0);
+                insertPoint.addView(newItemAddedButton, layoutParams);
+                newItemAddedButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        avoidDoubleClicks(view);
+                        Intent intent = new Intent(view.getContext(), MainActivity.class);
+                        String list = ((Button) view).getText().toString();
+                        intent.putExtra("com.carlolonghi.todo.TITLE", list);
+                        startActivity(intent);
+                    }
+                });
+                inputStream.close();
+                reader.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
 
+        items=new HashMap<>();
+        try {
+            FileInputStream inputStream = this.openFileInput("items.dat");
+            ObjectInputStream reader = new ObjectInputStream(inputStream);
+            items = (HashMap<String, ArrayList<String>>) reader.readObject();
+            inputStream.close();
+            reader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void onClick1(final View addButton) {

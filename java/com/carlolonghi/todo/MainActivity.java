@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +35,17 @@ import java.util.Map;
 public class MainActivity extends Activity {
 
     private String listTitle;
-    private Map<String,List<String>> items;
+    private Map<String,ArrayList<String>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
 
         //Get the title of the list
         Intent intent = getIntent();
@@ -49,31 +55,26 @@ public class MainActivity extends Activity {
         //Read the map of items
         items=new HashMap<>();
         try{
-                FileInputStream inputStream = this.openFileInput("items.dat");
-                ObjectInputStream reader = new ObjectInputStream(inputStream);
-                items = (Map<String, List<String>>) reader.readObject();
+            FileInputStream inputStream = this.openFileInput("items.dat");
+            ObjectInputStream reader = new ObjectInputStream(inputStream);
+            items = (Map<String, ArrayList<String>>) reader.readObject();
 
-                //Fill the activity with the correct items
-                for (String item : this.items.get(this.listTitle)) {
-                    RadioButton newItemAdded = new RadioButton(this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT);
-                    layoutParams.setMargins(16, 16, 16, 0);
-                    newItemAdded.setText(item);
-                    ViewGroup insertPoint = findViewById(R.id.itemsList);
-                    insertPoint.addView(newItemAdded,layoutParams);
-                }
-                inputStream.close();
-                reader.close();
+            //Fill the activity with the correct items
+            for (String item : this.items.get(this.listTitle)) {
+                RadioButton newItemAdded = new RadioButton(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(16, 16, 16, 0);
+                newItemAdded.setText(item);
+                ViewGroup insertPoint = findViewById(R.id.itemsList);
+                insertPoint.addView(newItemAdded,layoutParams);
+            }
+            inputStream.close();
+            reader.close();
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     public void onClick(View view){
@@ -95,7 +96,7 @@ public class MainActivity extends Activity {
         //Save the new item
         try{
             FileOutputStream outputStream=view.getContext().openFileOutput("items.dat",MODE_PRIVATE);
-            List<String> tmp=items.get(listTitle);
+            ArrayList<String> tmp=items.get(listTitle);
             tmp.add(newItem);
             items.put(listTitle,tmp);
             ObjectOutputStream writer=new ObjectOutputStream(outputStream);
@@ -105,6 +106,5 @@ public class MainActivity extends Activity {
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 }
