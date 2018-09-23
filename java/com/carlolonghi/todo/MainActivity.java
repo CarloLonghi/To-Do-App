@@ -31,13 +31,14 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends Activity {
 
     private String listTitle;
-    private Map<String,HashMap<String,Boolean>> items;
+    private Map<String,LinkedHashMap<String,Boolean>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +101,7 @@ public class MainActivity extends Activity {
     private void updateItemsOnFile(String item, Boolean isChecked){
         try{
             FileOutputStream outputStream = this.getBaseContext().openFileOutput("items.dat", MODE_PRIVATE);
-            HashMap<String,Boolean> tmp = items.get(listTitle);
+            LinkedHashMap<String,Boolean> tmp = items.get(listTitle);
             tmp.put(item,isChecked);
             items.put(listTitle, tmp);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
@@ -117,7 +118,7 @@ public class MainActivity extends Activity {
         try{
             FileInputStream inputStream = this.openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (Map<String, HashMap<String,Boolean>>) reader.readObject();
+            items = (LinkedHashMap<String, LinkedHashMap<String,Boolean>>) reader.readObject();
             inputStream.close();
             reader.close();
         } catch (Exception e){
@@ -152,16 +153,16 @@ public class MainActivity extends Activity {
         for(int i=0;i<numOfItems;i++){
             RadioButton radioButton=(RadioButton)linearLayout.getChildAt(i);
             if(radioButton.isChecked()){
-                HashMap<String, Boolean> tmp=items.get(this.listTitle);
+                LinkedHashMap<String, Boolean> tmp=items.get(this.listTitle);
                 tmp.put(radioButton.getText().toString(),true);
                 items.put(this.listTitle,tmp);
                 this.updateItemsOnFile(radioButton.getText().toString(),true);
             }
-            else{
-                HashMap<String, Boolean> tmp=items.get(this.listTitle);
-                tmp.put(radioButton.getText().toString(),false);
-                items.put(this.listTitle,tmp);
-            }
+            //else{
+               // LinkedHashMap<String, Boolean> tmp=items.get(this.listTitle);
+               // tmp.put(radioButton.getText().toString(),false);
+             //   items.put(this.listTitle,tmp);
+            //}
         }
     }
 }

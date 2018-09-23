@@ -34,6 +34,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -41,7 +42,7 @@ import java.util.Scanner;
 public class MenuActivity extends Activity {
 
     SharedPreferences prefs = null;
-    private Map<String,HashMap<String,Boolean>> items;
+    private Map<String,LinkedHashMap<String,Boolean>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class MenuActivity extends Activity {
     }
 
     private void populateLists(){
-        items=new HashMap<>();
+        items=new LinkedHashMap<>();
         try {
             readItemsFromFile();
             for (String list : items.keySet()) {
@@ -77,16 +78,16 @@ public class MenuActivity extends Activity {
     protected void onResume(){
         super.onResume();
 
-        items=new HashMap<>();
+        items=new LinkedHashMap<>();
         readItemsFromFile();
     }
 
     private void readItemsFromFile(){
-        items=new HashMap<>();
+        items=new LinkedHashMap<>();
         try {
             FileInputStream inputStream = this.openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (HashMap<String, HashMap<String,Boolean>>) reader.readObject();
+            items = (LinkedHashMap<String, LinkedHashMap<String,Boolean>>) reader.readObject();
             inputStream.close();
             reader.close();
 
@@ -129,7 +130,7 @@ public class MenuActivity extends Activity {
                 //Setting the listener for the list buttons
                 newItemAddedButton.setOnClickListener(new ListButtonListener());
 
-                items.put(newListTitle,new HashMap<String, Boolean>());
+                items.put(newListTitle,new LinkedHashMap<String, Boolean>());
                 try {
                     //Save the new list to lists.dat
                     FileOutputStream outputStream = addButton.getContext().openFileOutput("items.dat",MODE_PRIVATE);
