@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -86,25 +87,36 @@ public class MainActivity extends Activity {
         layoutParams.setMargins(16, 16, 16, 0);
         EditText newItemField=(EditText) findViewById(R.id.addNewText);
         String newItem=newItemField.getText().toString();
-        newItemField.setText("");
-        radioButton.setText(newItem);
+        if(newItem.equals("")){
+            Context context = getApplicationContext();
+            CharSequence text = "You can't add an empty item";
+            int duration = Toast.LENGTH_SHORT;
 
-        // insert into main view
-        ViewGroup insertPoint=(ViewGroup)findViewById(R.id.itemsList);
-        insertPoint.addView(radioButton,layoutParams);
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+        }
+        else {
+            newItemField.setText("");
+            radioButton.setText(newItem);
 
-        //Save the new item
-        try{
-            FileOutputStream outputStream=view.getContext().openFileOutput("items.dat",MODE_PRIVATE);
-            ArrayList<String> tmp=items.get(listTitle);
-            tmp.add(newItem);
-            items.put(listTitle,tmp);
-            ObjectOutputStream writer=new ObjectOutputStream(outputStream);
-            writer.writeObject(items);
-            outputStream.close();
-            writer.close();
-        }catch(Exception e){
-            e.printStackTrace();
+            // insert into main view
+            ViewGroup insertPoint = (ViewGroup) findViewById(R.id.itemsList);
+            insertPoint.addView(radioButton, layoutParams);
+
+            //Save the new item
+            try {
+                FileOutputStream outputStream = view.getContext().openFileOutput("items.dat", MODE_PRIVATE);
+                ArrayList<String> tmp = items.get(listTitle);
+                tmp.add(newItem);
+                items.put(listTitle, tmp);
+                ObjectOutputStream writer = new ObjectOutputStream(outputStream);
+                writer.writeObject(items);
+                outputStream.close();
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
