@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.text.Layout;
 import android.view.Gravity;
@@ -33,12 +34,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//OLEEEEEEEEEEEEEEEEEEEEEEEEEEEeee
-
 public class MainActivity extends Activity {
 
     private String listTitle;
-    private Map<String,ArrayList<String>> items;
+    private Map<String,HashMap<String,Boolean>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,29 +54,8 @@ public class MainActivity extends Activity {
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
         this.listTitle=title;
 
-        //Read the map of items
-        items=new HashMap<>();
-        try{
-            FileInputStream inputStream = this.openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (Map<String, ArrayList<String>>) reader.readObject();
-
-            //Fill the activity with the correct items
-            for (String item : this.items.get(this.listTitle)) {
-                RadioButton newItemAdded = new RadioButton(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                layoutParams.setMargins(16, 16, 16, 0);
-                newItemAdded.setText(item);
-                ViewGroup insertPoint = findViewById(R.id.itemsList);
-                insertPoint.addView(newItemAdded,layoutParams);
-            }
-            inputStream.close();
-            reader.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        //Fill the activity with the correct items
+        this.populateItems();
     }
 
     public void onClick(View view){
@@ -107,18 +85,84 @@ public class MainActivity extends Activity {
             insertPoint.addView(radioButton, layoutParams);
 
             //Save the new item
-            try {
-                FileOutputStream outputStream = view.getContext().openFileOutput("items.dat", MODE_PRIVATE);
-                ArrayList<String> tmp = items.get(listTitle);
-                tmp.add(newItem);
-                items.put(listTitle, tmp);
-                ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-                writer.writeObject(items);
-                outputStream.close();
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            this.updateItemsOnFile(newItem,false);
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        this.changeItemsStatus();
+    }
+
+    private void updateItemsOnFile(String item, Boolean isChecked){
+        try{
+            FileOutputStream outputStream = this.getBaseContext().openFileOutput("items.dat", MODE_PRIVATE);
+            HashMap<String,Boolean> tmp = items.get(listTitle);
+            tmp.put(item,isChecked);
+            items.put(listTitle, tmp);
+            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
+            writer.writeObject(items);
+            outputStream.close();
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readItemsFromFile(){
+        items=new HashMap<>();
+        try{
+            FileInputStream inputStream = this.openFileInput("items.dat");
+            ObjectInputStream reader = new ObjectInputStream(inputStream);
+            items = (Map<String, HashMap<String,Boolean>>) reader.readObject();
+            inputStream.close();
+            reader.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void populateItems(){
+        this.readItemsFromFile();
+        try{
+            for (String item : this.items.get(this.listTitle).keySet()) {
+                RadioButton newItemAdded = new RadioButton(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(16, 16, 16, 0);
+                newItemAdded.setText(item);
+                if(items.get(listTitle).get(item)==true)
+                    newItemAdded.setChecked(true) ;
+                ViewGroup insertPoint = findViewById(R.id.itemsList);
+                insertPoint.addView(newItemAdded,layoutParams);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void changeItemsStatus(){
+        LinearLayout linearLayout=(LinearLayout)findViewById(R.id.itemsList);
+        int numOfItems=linearLayout.getChildCount();
+        for(int i=0;i<numOfItems;i++){
+            RadioButton radioButton=(RadioButton)linearLayout.getChildAt(i);
+            if(radioButton.isChecked()){
+                HashMap<String, Boolean> tmp=items.get(this.listTitle);
+                tmp.put(radioButton.getText().toString(),true);
+                items.put(this.listTitle,tmp);
+                this.updateItemsOnFile(radioButton.getText().toString(),true);
+            }
+            else{
+                HashMap<String, Boolean> tmp=items.get(this.listTitle);
+                tmp.put(radioButton.getText().toString(),false);
+                items.put(this.listTitle,tmp);
             }
         }
     }
 }
+
+

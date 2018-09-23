@@ -41,7 +41,7 @@ import java.util.Scanner;
 public class MenuActivity extends Activity {
 
     SharedPreferences prefs = null;
-    private Map<String,ArrayList<String>> items;
+    private Map<String,HashMap<String,Boolean>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MenuActivity extends Activity {
         try {
             FileInputStream inputStream = this.openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (HashMap<String,ArrayList<String>>) reader.readObject();
+            items = (HashMap<String,HashMap<String,Boolean>>) reader.readObject();
             for (String list : items.keySet()) {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(this);
@@ -88,7 +88,7 @@ public class MenuActivity extends Activity {
         try {
             FileInputStream inputStream = this.openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (HashMap<String, ArrayList<String>>) reader.readObject();
+            items = (HashMap<String, HashMap<String,Boolean>>) reader.readObject();
             inputStream.close();
             reader.close();
 
@@ -141,7 +141,7 @@ public class MenuActivity extends Activity {
                     }
                 });
 
-                items.put(newListTitle,new ArrayList<String>());
+                items.put(newListTitle,new HashMap<String, Boolean>());
                 try {
                     //Save the new list to lists.dat
                     FileOutputStream outputStream = addButton.getContext().openFileOutput("items.dat",MODE_PRIVATE);
