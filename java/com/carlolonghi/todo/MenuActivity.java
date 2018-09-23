@@ -41,8 +41,7 @@ import java.util.Scanner;
 public class MenuActivity extends Activity {
 
     SharedPreferences prefs = null;
-    private List<String> lists;
-    private Map<String,List<String>> items;
+    private Map<String,ArrayList<String>> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,32 +49,12 @@ public class MenuActivity extends Activity {
         setContentView(R.layout.activity_menu);
         prefs = getSharedPreferences("com.carlolonghi.todo", MODE_PRIVATE);
 
-
-        File listFile = new File(getApplicationInfo().dataDir, "lists.dat");
-        File itemsFile = new File(getApplicationInfo().dataDir, "items.dat");
-        if (prefs.getBoolean("firstrun", true)) {
-            // Do first run stuff here then set 'firstrun' as false
-            try {
-                listFile.createNewFile();
-                itemsFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // using the following line to edit/commit prefs
-            prefs.edit().putBoolean("firstrun", false).commit();
-        }
-
-
-        lists = new ArrayList<>();
+        items=new HashMap<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(listFile)
-            );
-            if (br.readLine() != null) {
-                File data = new File(getApplicationInfo().dataDir, "lists.dat");
-                FileInputStream inputStream = new FileInputStream(data);
+                FileInputStream inputStream = this.openFileInput("items.dat");
                 ObjectInputStream reader = new ObjectInputStream(inputStream);
-                lists = (ArrayList<String>) reader.readObject();
-                for (String list : lists) {
+                items = (HashMap<String,ArrayList<String>>) reader.readObject();
+                for (String list : items.keySet()) {
                     ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                     Button newItemAddedButton = new Button(this);
                     newItemAddedButton.setText(list);
@@ -94,28 +73,10 @@ public class MenuActivity extends Activity {
                             startActivity(intent);
                         }
                     });
+                    inputStream.close();
+                    reader.close();
                 }
-                inputStream.close();
-                reader.close();
-            }
-            br.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        items=new HashMap<>();
-        File data=new File(getApplicationInfo().dataDir,"items.dat");
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(data));
-            if (br.readLine() != null) {
-                FileInputStream inputStream = new FileInputStream(data);
-                ObjectInputStream reader = new ObjectInputStream(inputStream);
-                items = (Map<String, List<String>>) reader.readObject();
-                inputStream.close();
-                reader.close();
-            }
-            br.close();
-        }catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -170,25 +131,11 @@ public class MenuActivity extends Activity {
                     }
                 });
 
-                lists.add(newListTitle);
+                items.put(newListTitle,new ArrayList<String>());
                 try {
                     //Save the new list to lists.dat
-                    File data = new File(getApplicationInfo().dataDir, "lists.dat");
-                    data.delete();
-                    data.createNewFile();
-                    FileOutputStream outputStream = new FileOutputStream(data);
+                    FileOutputStream outputStream = addButton.getContext().openFileOutput("items.dat",MODE_PRIVATE);
                     ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-                    writer.writeObject(lists);
-                    writer.close();
-                    outputStream.close();
-
-                    //Save the new list to items.dat
-                    data = new File(getApplicationInfo().dataDir, "items.dat");
-                    data.delete();
-                    data.createNewFile();
-                    outputStream = new FileOutputStream(data);
-                    writer = new ObjectOutputStream((outputStream));
-                    items.put(newListTitle,new ArrayList<String>());
                     writer.writeObject(items);
                     writer.close();
                     outputStream.close();

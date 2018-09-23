@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//FACCIAMO UNA PROVAAAAAAAAAAAAAAAAAaa
-
 public class MainActivity extends Activity {
 
     private String listTitle;
@@ -50,11 +48,8 @@ public class MainActivity extends Activity {
 
         //Read the map of items
         items=new HashMap<>();
-        File data=new File(getApplicationInfo().dataDir,"items.dat");
         try{
-            BufferedReader br = new BufferedReader(new FileReader(data));
-            if (br.readLine() != null) {
-                FileInputStream inputStream = new FileInputStream(data);
+                FileInputStream inputStream = this.openFileInput("items.dat");
                 ObjectInputStream reader = new ObjectInputStream(inputStream);
                 items = (Map<String, List<String>>) reader.readObject();
 
@@ -71,8 +66,6 @@ public class MainActivity extends Activity {
                 }
                 inputStream.close();
                 reader.close();
-            }
-            br.close();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -100,14 +93,11 @@ public class MainActivity extends Activity {
         insertPoint.addView(radioButton,layoutParams);
 
         //Save the new item
-        File data=new File(getApplicationInfo().dataDir,"item.dat");
         try{
-            FileOutputStream outputStream=new FileOutputStream(data);
+            FileOutputStream outputStream=view.getContext().openFileOutput("items.dat",MODE_PRIVATE);
             List<String> tmp=items.get(listTitle);
             tmp.add(newItem);
             items.put(listTitle,tmp);
-            data.delete();
-            data.createNewFile();
             ObjectOutputStream writer=new ObjectOutputStream(outputStream);
             writer.writeObject(items);
             outputStream.close();
