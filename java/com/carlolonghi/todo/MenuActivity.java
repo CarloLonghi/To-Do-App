@@ -8,15 +8,19 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.text.Layout;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,6 +47,7 @@ public class MenuActivity extends Activity {
 
     SharedPreferences prefs = null;
     private Map<String,LinkedHashMap<String,Boolean>> items;
+    private Button contextMenuList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +61,12 @@ public class MenuActivity extends Activity {
         items=new LinkedHashMap<>();
         try {
             readItemsFromFile();
+            ((LinearLayout)findViewById(R.id.ListTitles)).removeAllViews();
             for (String list : items.keySet()) {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(this);
                 newItemAddedButton.setText(list);
+                registerForContextMenu(newItemAddedButton);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
@@ -121,6 +128,7 @@ public class MenuActivity extends Activity {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(v.getContext());
                 newItemAddedButton.setText(newListTitle);
+                registerForContextMenu(newItemAddedButton);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
@@ -131,16 +139,7 @@ public class MenuActivity extends Activity {
                 newItemAddedButton.setOnClickListener(new ListButtonListener());
 
                 items.put(newListTitle,new LinkedHashMap<String, Boolean>());
-                try {
-                    //Save the new list to lists.dat
-                    FileOutputStream outputStream = addButton.getContext().openFileOutput("items.dat",MODE_PRIVATE);
-                    ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-                    writer.writeObject(items);
-                    writer.close();
-                    outputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                updateItemsOnFile();
 
                 //open the list of items
                 Intent intent = new Intent(newItemAddedButton.getContext(), MainActivity.class);
@@ -149,6 +148,39 @@ public class MenuActivity extends Activity {
                 newItemAddedButton.getContext().startActivity(intent);
             }
         });
+    }
+
+    //Creates the context menu when the lists are long-pressed
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, v.getId(), 0, "Delete");
+        menu.add(0, v.getId(), 0, "Bookmark");
+        this.contextMenuList=(Button)v;
+    }
+
+    //Manages the context menu choices
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Delete")){
+            items.remove(contextMenuList.getText());
+            updateItemsOnFile();
+            populateLists();
+        }
+        else if(item.getTitle().equals("Bookmark")){
+            LinkedHashMap<String,LinkedHashMap<String,Boolean>> tmp=new LinkedHashMap<>();
+            tmp.put(contextMenuList.getText().toString(),items.get(contextMenuList.getText()));
+            for(String key : items.keySet()){
+                if(!key.equals(contextMenuList.getText().toString()))
+                    tmp.put(key,items.get(key));
+            }
+            items=tmp;
+            updateItemsOnFile();
+            populateLists();
+
+            //LA LISTA EVIDENZIATA DEVE AVERE UN COLORE DIVERSO, STILE DIVERSO ECC.
+        }
+        return true;
     }
 
     //To prevent from double clicking the row item and so prevents overlapping fragment.
@@ -164,6 +196,18 @@ public class MenuActivity extends Activity {
                 view.setClickable(true);
             }
         }, DELAY_IN_MS);
+    }
+
+    private void updateItemsOnFile(){
+        try {
+            FileOutputStream outputStream = this.openFileOutput("items.dat", MODE_PRIVATE);
+            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
+            writer.writeObject(items);
+            writer.close();
+            outputStream.close();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
