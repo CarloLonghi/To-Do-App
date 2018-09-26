@@ -128,6 +128,8 @@ public class MainActivity extends Activity {
 
     private void populateItems(){
         this.readItemsFromFile();
+        ViewGroup insertPoint = findViewById(R.id.itemsList);
+        insertPoint.removeAllViews();
         try{
             for (String item : this.items.get(this.listTitle).keySet()) {
                 RadioButton newItemAdded = new RadioButton(this);
@@ -138,7 +140,6 @@ public class MainActivity extends Activity {
                 newItemAdded.setText(item);
                 if(items.get(listTitle).get(item)==true)
                     newItemAdded.setChecked(true) ;
-                ViewGroup insertPoint = findViewById(R.id.itemsList);
                 insertPoint.addView(newItemAdded,layoutParams);
             }
         } catch (Exception e){
