@@ -107,6 +107,15 @@ public class MainActivity extends FragmentActivity {
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
         }
+        if(items.get(listTitle).keySet().contains(newItem)){
+            Context context = getApplicationContext();
+            CharSequence text = "Item already exists";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+        }
         else {
             newItemField.setText("");
             checkBox.setText(newItem);
