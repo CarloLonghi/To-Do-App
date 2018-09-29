@@ -6,4 +6,5 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="newListHint">Type the name of the new list...</string>
     <string name="newList">New List</string>
+    <string name="newItemHint">Type the name of the new item</string>
 </resources>

@@ -1,54 +1,40 @@
 package com.carlolonghi.todo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.constraint.ConstraintLayout;
-import android.text.Layout;
+import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import android.arch.lifecycle.ViewModelProviders;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private String listTitle;
     private Map<String,LinkedHashMap<String,Boolean>> items;
+    private MyViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
+        this.model = ViewModelProviders.of(this).get(MyViewModel.class);
 
         //Get the title of the list
         Intent intent = getIntent();
@@ -56,13 +42,56 @@ public class MainActivity extends Activity {
         this.listTitle=title;
         setTitle(listTitle.toUpperCase());
 
+        EditText newItem=(EditText)findViewById(R.id.addNewText);
+        newItem.setHorizontallyScrolling(false);
+        newItem.setMaxLines(Integer.MAX_VALUE);
+        newItem.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        newItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch(actionId){
+                    case EditorInfo.IME_ACTION_DONE:
+                        onClick(findViewById(R.id.addNewButton));
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
         //Fill the activity with the correct items
         this.populateItems();
     }
 
+    //This method saves an InstanceState when the activity is destroyed
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current state
+        savedInstanceState.putString("LIST_TITLE", this.listTitle);
+        EditText editText=(EditText)findViewById(R.id.addNewText);
+        savedInstanceState.putString("ENTERING_TEXT", editText.getText().toString());
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //Restores the activity from the Instance State
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        this.listTitle = savedInstanceState.getString("LIST_TITLE");
+        EditText editText=(EditText)findViewById(R.id.addNewText);
+        String txt=savedInstanceState.getString("ENTERING_TEXT");
+        editText.setText(txt);
+        editText.setSelection(txt.length());
+    }
+
     public void onClick(View view){
         // fill in any details dynamically here
-        RadioButton radioButton=new RadioButton(this);
+        CheckBox checkBox=new CheckBox(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -80,85 +109,116 @@ public class MainActivity extends Activity {
         }
         else {
             newItemField.setText("");
-            radioButton.setText(newItem);
+            checkBox.setText(newItem);
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeItemStatus(v);
+                }
+            });
 
             // insert into main view
             ViewGroup insertPoint = (ViewGroup) findViewById(R.id.itemsList);
-            insertPoint.addView(radioButton, layoutParams);
+            int pos=insertPoint.getChildCount()-numOfCheckedItems()-1;
+            insertPoint.addView(checkBox, pos, layoutParams);
 
             //Save the new item
-            this.updateItemsOnFile(newItem,false);
+            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
+            tmp.put(checkBox.getText().toString(), false);
+            items.put(this.listTitle, tmp);
+            this.updateItemsOnFile();
         }
+    }
+
+    private int numOfCheckedItems(){
+        int count=0;
+        LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
+        for(String item : tmp.keySet()){
+            if(tmp.get(item))
+                count++;
+        }
+        return count;
     }
 
     @Override
     protected void onPause(){
         super.onPause();
 
-        this.changeItemsStatus();
+        this.updateItemsOnFile();
     }
 
-    private void updateItemsOnFile(String item, Boolean isChecked){
+    private void populateItems(){
+        ViewGroup insertPoint = findViewById(R.id.itemsList);
+        items=model.getItems();
+        try{
+            for (String item : this.items.get(this.listTitle).keySet()) {
+                CheckBox newItemAdded = new CheckBox(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(16, 16, 16, 0);
+                newItemAdded.setText(item);
+                newItemAdded.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        changeItemStatus(v);
+                    }
+                });
+                if(items.get(listTitle).get(item)==true) {
+                    newItemAdded.setChecked(true);
+                    insertPoint.addView(newItemAdded,layoutParams);
+                }
+                else {
+                    insertPoint.addView(newItemAdded,0+uncheckedItems(insertPoint), layoutParams);
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private int uncheckedItems(ViewGroup l){
+        int count=0;
+        for(int i=0;i<l.getChildCount();i++){
+            if(l.getChildAt(i).getId()!=R.id.addNewContainer && !((CheckBox)(l.getChildAt(i))).isChecked())
+                count++;
+        }
+        return count;
+    }
+
+    private void changeItemStatus(View v){
+        CheckBox checkBox = (CheckBox) v;
+        if (checkBox.isChecked()) {
+            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
+            tmp.remove(checkBox.getText().toString());
+            tmp.put(checkBox.getText().toString(), true);
+            items.put(this.listTitle, tmp);
+            this.updateItemsOnFile();
+            LinearLayout itemsList=(LinearLayout)findViewById(R.id.itemsList);
+            itemsList.removeView(checkBox);
+            itemsList.addView(checkBox);
+        }
+        else{
+            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
+            tmp.remove(checkBox.getText().toString());
+            tmp.put(checkBox.getText().toString(), false);
+            items.put(this.listTitle, tmp);
+            this.updateItemsOnFile();
+            LinearLayout itemsList=(LinearLayout)findViewById(R.id.itemsList);
+            itemsList.removeView(checkBox);
+            itemsList.addView(checkBox,0+uncheckedItems(itemsList));
+        }
+    }
+
+    private void updateItemsOnFile(){
         try{
             FileOutputStream outputStream = this.getBaseContext().openFileOutput("items.dat", MODE_PRIVATE);
-            LinkedHashMap<String,Boolean> tmp = items.get(listTitle);
-            tmp.put(item,isChecked);
-            items.put(listTitle, tmp);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
             writer.writeObject(items);
             outputStream.close();
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void readItemsFromFile(){
-        items=new HashMap<>();
-        try{
-            FileInputStream inputStream = this.openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (LinkedHashMap<String, LinkedHashMap<String,Boolean>>) reader.readObject();
-            inputStream.close();
-            reader.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private void populateItems(){
-        this.readItemsFromFile();
-        ViewGroup insertPoint = findViewById(R.id.itemsList);
-        insertPoint.removeAllViews();
-        try{
-            for (String item : this.items.get(this.listTitle).keySet()) {
-                RadioButton newItemAdded = new RadioButton(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                layoutParams.setMargins(16, 16, 16, 0);
-                newItemAdded.setText(item);
-                if(items.get(listTitle).get(item)==true)
-                    newItemAdded.setChecked(true) ;
-                insertPoint.addView(newItemAdded,layoutParams);
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-    private void changeItemsStatus(){
-        LinearLayout linearLayout=(LinearLayout)findViewById(R.id.itemsList);
-        int numOfItems=linearLayout.getChildCount();
-        for(int i=0;i<numOfItems;i++){
-            RadioButton radioButton=(RadioButton)linearLayout.getChildAt(i);
-            if(radioButton.isChecked()){
-                LinkedHashMap<String, Boolean> tmp=items.get(this.listTitle);
-                tmp.put(radioButton.getText().toString(),true);
-                items.put(this.listTitle,tmp);
-                this.updateItemsOnFile(radioButton.getText().toString(),true);
-            }
         }
     }
 }

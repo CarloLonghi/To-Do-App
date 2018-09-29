@@ -1,12 +1,15 @@
 package com.carlolonghi.todo;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentActivity;
 import android.text.Layout;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -43,16 +46,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class MenuActivity extends Activity {
+public class MenuActivity extends FragmentActivity {
 
     SharedPreferences prefs = null;
     private Map<String,LinkedHashMap<String,Boolean>> items;
     private Button contextMenuList;
+    private MyViewModel model;
+    private boolean isPresent=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        model = ViewModelProviders.of(this).get(MyViewModel.class);
+        this.items=model.getItems();
 
         populateLists();
     }
@@ -60,7 +68,8 @@ public class MenuActivity extends Activity {
     private void populateLists(){
         items=new LinkedHashMap<>();
         try {
-            readItemsFromFile();
+            //readItemsFromFile();
+            items=model.getItems();
             ((LinearLayout)findViewById(R.id.ListTitles)).removeAllViews();
             for (String list : items.keySet()) {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
@@ -85,47 +94,160 @@ public class MenuActivity extends Activity {
     protected void onResume(){
         super.onResume();
 
-        items=new LinkedHashMap<>();
-        readItemsFromFile();
+        //readItemsFromFile();
+        items=model.getItems();
     }
 
-    private void readItemsFromFile(){
-        items=new LinkedHashMap<>();
-        try {
-            FileInputStream inputStream = this.openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (LinkedHashMap<String, LinkedHashMap<String,Boolean>>) reader.readObject();
-            inputStream.close();
-            reader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    //This method saves an InstanceState when the activity is destroyed
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current state
+        savedInstanceState.putBoolean("isPresent",isPresent);
+        if(isPresent) {
+            ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
+            LinearLayout container = (LinearLayout) insertPoint.getChildAt(insertPoint.getChildCount() - 1);
+            EditText editText = (EditText) container.getChildAt(0);
+            savedInstanceState.putString("ENTERING_TEXT", editText.getText().toString());
         }
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //Restores the activity from the Instance State
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
+        if((isPresent=savedInstanceState.getBoolean("isPresent"))) {
+            //Add the edittext where the user has to type the title of the new list
+            LinearLayout newListLayout=new LinearLayout(this);
+            newListLayout.setOrientation(LinearLayout.HORIZONTAL);
+            EditText newListText=new EditText(this);
+            Button newListButton=new Button(this);
+            LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(48,48,48,0);
+
+            LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,13F);
+            layoutParams1.setMargins(0,0,15,0);
+
+            LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1F);
+            layoutParams2.setMargins(0,0,0,0);
+            newListButton.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+            newListText.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+            newListButton.setText("ADD");
+            newListLayout.addView(newListText,layoutParams1);
+            newListLayout.addView(newListButton,layoutParams2);
+            insertPoint.addView(newListLayout,layoutParams);
+            String txt = savedInstanceState.getString("ENTERING_TEXT");
+            newListText.setText(txt);
+            newListText.setSelection(txt.length());
+            newListButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Button addButton=(Button)findViewById(R.id.newListButton);
+                    addButton.setClickable(true);
+
+                    //Get the title and remove the edittext
+                    //EditText editText = (EditText) findViewById(R.id.newListToAdd);
+                    ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
+                    LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
+                    EditText editText=(EditText)container.getChildAt(0);
+                    String newListTitle = editText.getText().toString();
+
+                    //Delete the add editText and Button from layout
+                    ((ViewManager) editText.getParent()).removeView(editText);
+                    ((ViewManager) container.getParent()).removeView(container);
+                    ((ViewManager) v.getParent()).removeView(v);
+                    isPresent=false;
+
+                    //Add the new list to the page
+                    //ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
+                    Button newItemAddedButton = new Button(v.getContext());
+                    newItemAddedButton.setText(newListTitle);
+                    registerForContextMenu(newItemAddedButton);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(48, 48, 48, 0);
+                    insertPoint.addView(newItemAddedButton, layoutParams);
+
+                    //Setting the listener for the list buttons
+                    newItemAddedButton.setOnClickListener(new ListButtonListener());
+
+                    items.put(newListTitle,new LinkedHashMap<String, Boolean>());
+                    updateItemsOnFile();
+
+                    //open the list of items
+                    Intent intent = new Intent(newItemAddedButton.getContext(), MainActivity.class);
+                    String list = ((Button) newItemAddedButton).getText().toString();
+                    intent.putExtra("com.carlolonghi.todo.TITLE", list);
+                    newItemAddedButton.getContext().startActivity(intent);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        this.updateItemsOnFile();
     }
 
     public void onClick(final View addButton) {
         addButton.setClickable(false);
 
         //Add the edittext where the user has to type the title of the new list
-        LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v1 = vi.inflate(R.layout.new_list_to_add_layout, null);
+        LinearLayout newListLayout=new LinearLayout(this);
+        newListLayout.setOrientation(LinearLayout.HORIZONTAL);
+        EditText newListText=new EditText(this);
+        Button newListButton=new Button(this);
+        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(48,48,48,0);
+
+        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,13F);
+        layoutParams1.setMargins(0,0,15,0);
+
+        LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1F);
+        layoutParams2.setMargins(0,0,0,0);
+        newListButton.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+        newListText.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+        newListButton.setText("ADD");
+        newListLayout.addView(newListText,layoutParams1);
+        newListLayout.addView(newListButton,layoutParams2);
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
-        insertPoint.addView(v1);
-        insertPoint.findViewById(R.id.addNewList).setOnClickListener(new View.OnClickListener() {
+        insertPoint.addView(newListLayout,layoutParams);
+        isPresent=true;
+
+        newListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addButton.setClickable(true);
 
                 //Get the title and remove the edittext
-                EditText editText = (EditText) findViewById(R.id.newListToAdd);
+                //EditText editText = (EditText) findViewById(R.id.newListToAdd);
+                ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
+                LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
+                EditText editText=(EditText)container.getChildAt(0);
                 String newListTitle = editText.getText().toString();
 
                 //Delete the add editText and Button from layout
                 ((ViewManager) editText.getParent()).removeView(editText);
+                ((ViewManager) container.getParent()).removeView(container);
                 ((ViewManager) v.getParent()).removeView(v);
+                isPresent=false;
 
                 //Add the new list to the page
-                ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
+                //ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(v.getContext());
                 newItemAddedButton.setText(newListTitle);
                 registerForContextMenu(newItemAddedButton);
@@ -148,6 +270,23 @@ public class MenuActivity extends Activity {
                 newItemAddedButton.getContext().startActivity(intent);
             }
         });
+    }
+
+    private void newListInsertMode(){
+        //Add the edittext where the user has to type the title of the new list
+        LinearLayout newListLayout=new LinearLayout(this);
+        newListLayout.setOrientation(LinearLayout.HORIZONTAL);
+        EditText newListText=new EditText(this);
+        Button newListButton=new Button(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(48, 48, 48, 0);
+        newListLayout.addView(newListText,layoutParams);
+        newListLayout.addView(newListButton,layoutParams);
+        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
+        insertPoint.addView(newListLayout);
+        isPresent=true;
     }
 
     //Creates the context menu when the lists are long-pressed
@@ -181,21 +320,6 @@ public class MenuActivity extends Activity {
             //LA LISTA EVIDENZIATA DEVE AVERE UN COLORE DIVERSO, STILE DIVERSO ECC.
         }
         return true;
-    }
-
-    //To prevent from double clicking the row item and so prevents overlapping fragment.
-    public static void avoidDoubleClicks(final View view) {
-        final long DELAY_IN_MS = 900;
-        if (!view.isClickable()) {
-            return;
-        }
-        view.setClickable(false);
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                view.setClickable(true);
-            }
-        }, DELAY_IN_MS);
     }
 
     private void updateItemsOnFile(){
