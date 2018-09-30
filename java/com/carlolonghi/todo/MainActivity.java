@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -62,6 +63,12 @@ public class MainActivity extends FragmentActivity {
 
         //Fill the activity with the correct items
         this.populateItems();
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
+        startActivityForResult(myIntent, 0);
+        return true;
     }
 
     //This method saves an InstanceState when the activity is destroyed
