@@ -42,42 +42,43 @@ public class MainActivity extends FragmentActivity {
     private MyViewModel model;
     private NonCheckedItemsFragment nonCheckedItemsFragment;
 
-
-    //LA PROVA DELLA VERITA'
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Gets the ViewModel that reads and holds the application data and read the Map of items
         this.model = ViewModelProviders.of(this).get(MyViewModel.class);
         this.items=model.getItems();
 
-        //Get the title of the list
+        //Gets the title of the list and set it to the Activity
         Intent intent = getIntent();
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
         this.listTitle=title.toUpperCase();
         setTitle(listTitle.toUpperCase());
 
+        //Creates and initialize the NonCheckedItems Fragment
         FrameLayout fragmentContainer=(FrameLayout)findViewById(R.id.fragmentContainer);
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
         nonCheckedItemsFragment=NonCheckedItemsFragment.newInstance(listTitle);
-        //fragment.getView().setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         fragmentTransaction.add(fragmentContainer.getId(),nonCheckedItemsFragment);
         fragmentTransaction.commit();
 
 
+        //This block of instructions regulates the correct behaviour of the EditText used to add the new items
+        //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
+        //the item is added to the list as the Add button has been pressed
         EditText newItem=(EditText)findViewById(R.id.addNewText);
         newItem.setHorizontallyScrolling(false);
         newItem.setMaxLines(Integer.MAX_VALUE);
         newItem.setRawInputType(InputType.TYPE_CLASS_TEXT);
-
         newItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 switch(actionId){
                     case EditorInfo.IME_ACTION_DONE:
+                        //Calls the onClick of the Add button if the newLine is pressed
                         onClick(findViewById(R.id.addNewButton));
                         return true;
                     default:
@@ -87,20 +88,19 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
+    //The function that regulates the behaviour of the back button that is on top-left of the screen
     public boolean onOptionsItemSelected(MenuItem item){
+        //The button make the app go back to MenuActivity
         Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
         startActivityForResult(myIntent, 0);
         return true;
-    }
-
-    public String getListTitle(){
-        return this.listTitle;
     }
 
     @Override
     public void onResume(){
         super.onResume();
 
+        //Whenever the activity is resumed we need to update the NonChekedItemsFragment's height to make sure every item is visible
         nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
     }
 
@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore state members from saved instance
+        // Restore views' state from saved instance
         this.listTitle = savedInstanceState.getString("LIST_TITLE");
         EditText editText=(EditText)findViewById(R.id.addNewText);
         String txt=savedInstanceState.getString("ENTERING_TEXT");
@@ -129,9 +129,13 @@ public class MainActivity extends FragmentActivity {
         editText.setSelection(txt.length());
     }
 
+    //Handles the click of the button that adds the new item
     public void onClick(View view){
+        //Gets the newItem name from the EditText
         EditText newItemField=(EditText) findViewById(R.id.addNewText);
         String newItem=newItemField.getText().toString();
+
+        //Checks if the newItem has an empty name
         if(newItem.equals("")){
             Context context = getApplicationContext();
             CharSequence text = "You can't add an empty item";
@@ -141,7 +145,8 @@ public class MainActivity extends FragmentActivity {
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
         }
-        if(items.get(listTitle).getNonCheckedItems().contains(newItem)){
+        //Checks if the new newItem name already exists
+        else if(items.get(listTitle).getNonCheckedItems().contains(newItem)){
             Context context = getApplicationContext();
             CharSequence text = "Item already exists";
             int duration = Toast.LENGTH_SHORT;
@@ -150,6 +155,7 @@ public class MainActivity extends FragmentActivity {
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
         }
+        //Add the new item if everything is ok
         else {
             //Save the new item
             items.get(listTitle).addNonCheckedItem(newItem);
@@ -159,8 +165,8 @@ public class MainActivity extends FragmentActivity {
             FrameLayout frameLayout=(FrameLayout)findViewById(R.id.fragmentContainer);
             NonCheckedItemsFragment nonCheckedItemsFragment=(NonCheckedItemsFragment)getSupportFragmentManager().findFragmentById(frameLayout.getId());
             nonCheckedItemsFragment.addItem(newItem);
-            //updateFragmentSize(false);
 
+            //Cancel the just added item name from the editText
             newItemField.setText("");
         }
     }
@@ -169,6 +175,7 @@ public class MainActivity extends FragmentActivity {
     protected void onPause(){
         super.onPause();
 
+        //Save the items state on file using the ViewModel whenever the activity is paused
         model.updateItemsOnFile(this.getBaseContext());
     }
 }
