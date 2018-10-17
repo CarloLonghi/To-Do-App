@@ -42,6 +42,9 @@ public class MainActivity extends FragmentActivity {
     private MyViewModel model;
     private NonCheckedItemsFragment nonCheckedItemsFragment;
 
+
+    //LA PROVA DELLA VERITA'
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
