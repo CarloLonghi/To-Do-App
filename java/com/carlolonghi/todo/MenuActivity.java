@@ -51,7 +51,7 @@ import java.util.Scanner;
 public class MenuActivity extends FragmentActivity {
 
     SharedPreferences prefs = null;
-    private Map<String,LinkedHashMap<String,Boolean>> items;
+    private Map<String,Items> items;
     private Button contextMenuList;
     private MyViewModel model;
     private boolean isPresent=false;
@@ -65,9 +65,6 @@ public class MenuActivity extends FragmentActivity {
         this.items=model.getItems();
 
         populateLists();
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void populateLists(){
@@ -192,7 +189,7 @@ public class MenuActivity extends FragmentActivity {
                         //Setting the listener for the list buttons
                         newItemAddedButton.setOnClickListener(new ListButtonListener());
 
-                        items.put(newListTitle.toUpperCase(), new LinkedHashMap<String, Boolean>());
+                        items.put(newListTitle.toUpperCase(), new Items());
                         updateItemsOnFile();
 
                         //Reactivate the newListButton
@@ -293,7 +290,7 @@ public class MenuActivity extends FragmentActivity {
                     //Setting the listener for the list buttons
                     newItemAddedButton.setOnClickListener(new ListButtonListener());
 
-                    items.put(newListTitle.toUpperCase(), new LinkedHashMap<String, Boolean>());
+                    items.put(newListTitle.toUpperCase(), new Items());
                     updateItemsOnFile();
 
                     //Reactivate the newListButton
@@ -336,7 +333,7 @@ public class MenuActivity extends FragmentActivity {
             populateLists();
         }
         else if(item.getTitle().equals("Bookmark")){
-            LinkedHashMap<String,LinkedHashMap<String,Boolean>> tmp=new LinkedHashMap<>();
+            LinkedHashMap<String,Items> tmp=new LinkedHashMap<>();
             tmp.put(contextMenuList.getText().toString(),items.get(contextMenuList.getText()));
             for(String key : items.keySet()){
                 if(!key.equals(contextMenuList.getText().toString()))

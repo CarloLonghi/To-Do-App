@@ -1,9 +1,15 @@
 package com.carlolonghi.todo;
 
+
+import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -13,22 +19,28 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
+import java.io.LineNumberInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import android.arch.lifecycle.ViewModelProviders;
+
+
 
 public class MainActivity extends FragmentActivity {
 
     private String listTitle;
-    private Map<String,LinkedHashMap<String,Boolean>> items;
+    private Map<String,Items> items;
     private MyViewModel model;
+    private NonCheckedItemsFragment nonCheckedItemsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +48,22 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         this.model = ViewModelProviders.of(this).get(MyViewModel.class);
+        this.items=model.getItems();
 
         //Get the title of the list
         Intent intent = getIntent();
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
-        this.listTitle=title;
+        this.listTitle=title.toUpperCase();
         setTitle(listTitle.toUpperCase());
+
+        FrameLayout fragmentContainer=(FrameLayout)findViewById(R.id.fragmentContainer);
+        FragmentManager fragmentManager=getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        nonCheckedItemsFragment=NonCheckedItemsFragment.newInstance(listTitle);
+        //fragment.getView().setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        fragmentTransaction.add(fragmentContainer.getId(),nonCheckedItemsFragment);
+        fragmentTransaction.commit();
+
 
         EditText newItem=(EditText)findViewById(R.id.addNewText);
         newItem.setHorizontallyScrolling(false);
@@ -60,15 +82,23 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         });
-
-        //Fill the activity with the correct items
-        this.populateItems();
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
         Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
         startActivityForResult(myIntent, 0);
         return true;
+    }
+
+    public String getListTitle(){
+        return this.listTitle;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
     }
 
     //This method saves an InstanceState when the activity is destroyed
@@ -97,12 +127,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void onClick(View view){
-        // fill in any details dynamically here
-        CheckBox checkBox=new CheckBox(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(16, 16, 16, 0);
         EditText newItemField=(EditText) findViewById(R.id.addNewText);
         String newItem=newItemField.getText().toString();
         if(newItem.equals("")){
@@ -114,7 +138,7 @@ public class MainActivity extends FragmentActivity {
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
         }
-        if(items.get(listTitle).keySet().contains(newItem)){
+        if(items.get(listTitle).getNonCheckedItems().contains(newItem)){
             Context context = getApplicationContext();
             CharSequence text = "Item already exists";
             int duration = Toast.LENGTH_SHORT;
@@ -124,118 +148,25 @@ public class MainActivity extends FragmentActivity {
             toast.show();
         }
         else {
-            newItemField.setText("");
-            checkBox.setText(newItem);
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeItemStatus(v);
-                }
-            });
-
-            // insert into main view
-            ViewGroup insertPoint = (ViewGroup) findViewById(R.id.itemsList);
-            int pos=insertPoint.getChildCount()-numOfCheckedItems()-1;
-            insertPoint.addView(checkBox, pos, layoutParams);
-
             //Save the new item
-            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
-            tmp.put(checkBox.getText().toString(), false);
-            items.put(this.listTitle, tmp);
-            this.updateItemsOnFile();
-        }
-    }
+            items.get(listTitle).addNonCheckedItem(newItem);
+            model.updateItemsOnFile(this.getBaseContext());
 
-    private int numOfCheckedItems(){
-        int count=0;
-        LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
-        for(String item : tmp.keySet()){
-            if(tmp.get(item))
-                count++;
+            //Add the new item to the fragment here
+            FrameLayout frameLayout=(FrameLayout)findViewById(R.id.fragmentContainer);
+            NonCheckedItemsFragment nonCheckedItemsFragment=(NonCheckedItemsFragment)getSupportFragmentManager().findFragmentById(frameLayout.getId());
+            nonCheckedItemsFragment.addItem(newItem);
+            //updateFragmentSize(false);
+
+            newItemField.setText("");
         }
-        return count;
     }
 
     @Override
     protected void onPause(){
         super.onPause();
 
-        this.updateItemsOnFile();
-    }
-
-    private void populateItems(){
-        ViewGroup insertPoint = findViewById(R.id.itemsList);
-        items=model.getItems();
-        try{
-            for (String item : this.items.get(this.listTitle).keySet()) {
-                CheckBox newItemAdded = new CheckBox(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                layoutParams.setMargins(16, 16, 16, 0);
-                newItemAdded.setText(item);
-                newItemAdded.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        changeItemStatus(v);
-                    }
-                });
-                if(items.get(listTitle).get(item)==true) {
-                    newItemAdded.setChecked(true);
-                    insertPoint.addView(newItemAdded,layoutParams);
-                }
-                else {
-                    insertPoint.addView(newItemAdded,0+uncheckedItems(insertPoint), layoutParams);
-                }
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private int uncheckedItems(ViewGroup l){
-        int count=0;
-        for(int i=0;i<l.getChildCount();i++){
-            if(l.getChildAt(i).getId()!=R.id.addNewContainer && !((CheckBox)(l.getChildAt(i))).isChecked())
-                count++;
-        }
-        return count;
-    }
-
-    private void changeItemStatus(View v){
-        CheckBox checkBox = (CheckBox) v;
-        if (checkBox.isChecked()) {
-            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
-            tmp.remove(checkBox.getText().toString());
-            tmp.put(checkBox.getText().toString(), true);
-            items.put(this.listTitle, tmp);
-            this.updateItemsOnFile();
-            LinearLayout itemsList=(LinearLayout)findViewById(R.id.itemsList);
-            itemsList.removeView(checkBox);
-            itemsList.addView(checkBox);
-        }
-        else{
-            LinkedHashMap<String, Boolean> tmp = items.get(this.listTitle);
-            tmp.remove(checkBox.getText().toString());
-            tmp.put(checkBox.getText().toString(), false);
-            items.put(this.listTitle, tmp);
-            this.updateItemsOnFile();
-            LinearLayout itemsList=(LinearLayout)findViewById(R.id.itemsList);
-            itemsList.removeView(checkBox);
-            itemsList.addView(checkBox,0+uncheckedItems(itemsList));
-        }
-    }
-
-    private void updateItemsOnFile(){
-        try{
-            FileOutputStream outputStream = this.getBaseContext().openFileOutput("items.dat", MODE_PRIVATE);
-            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(items);
-            outputStream.close();
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        model.updateItemsOnFile(this.getBaseContext());
     }
 }
 
