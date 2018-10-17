@@ -65,9 +65,6 @@ public class MenuActivity extends FragmentActivity {
         this.items=model.getItems();
 
         populateLists();
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void populateLists(){
