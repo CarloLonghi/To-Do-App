@@ -1,6 +1,7 @@
 package com.carlolonghi.todo;
 
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -40,12 +43,23 @@ public class MainActivity extends FragmentActivity {
     private String listTitle;
     private Map<String,Items> items;
     private MyViewModel model;
-    private NonCheckedItemsFragment nonCheckedItemsFragment;
+    private RecyclerView myRecyclerView;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager myLayoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myRecyclerView=(RecyclerView) findViewById(R.id.myRecyclerView);
+
+        // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
+        myRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        myLayoutManager = new LinearLayoutManager(this);
+        myRecyclerView.setLayoutManager(myLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         this.model = ViewModelProviders.of(this).get(MyViewModel.class);
@@ -57,16 +71,11 @@ public class MainActivity extends FragmentActivity {
         this.listTitle=title.toUpperCase();
         setTitle(listTitle.toUpperCase());
 
-        //Creates and initialize the NonCheckedItems Fragment
-        FrameLayout fragmentContainer=(FrameLayout)findViewById(R.id.fragmentContainer);
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        nonCheckedItemsFragment=NonCheckedItemsFragment.newInstance(listTitle);
-        fragmentTransaction.add(fragmentContainer.getId(),nonCheckedItemsFragment);
-        fragmentTransaction.commit();
+        // specify an adapter (see also next example)
+        myAdapter = new ItemsAdapter(items,listTitle);
+        myRecyclerView.setAdapter(myAdapter);
 
-
-        //This block of instructions regulates the correct behaviour of the EditText used to add the new items
+       /* //This block of instructions regulates the correct behaviour of the EditText used to add the new items
         //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
         //the item is added to the list as the Add button has been pressed
         EditText newItem=(EditText)findViewById(R.id.addNewText);
@@ -85,7 +94,7 @@ public class MainActivity extends FragmentActivity {
                         return false;
                 }
             }
-        });
+        });*/
     }
 
     //The function that regulates the behaviour of the back button that is on top-left of the screen
@@ -101,10 +110,10 @@ public class MainActivity extends FragmentActivity {
         super.onResume();
 
         //Whenever the activity is resumed we need to update the NonChekedItemsFragment's height to make sure every item is visible
-        nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
+        //nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
     }
 
-    //This method saves an InstanceState when the activity is destroyed
+   /* //This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current state
@@ -127,9 +136,9 @@ public class MainActivity extends FragmentActivity {
         String txt=savedInstanceState.getString("ENTERING_TEXT");
         editText.setText(txt);
         editText.setSelection(txt.length());
-    }
+    }*/
 
-    //Handles the click of the button that adds the new item
+    /*//Handles the click of the button that adds the new item
     public void onClick(View view){
         //Gets the newItem name from the EditText
         EditText newItemField=(EditText) findViewById(R.id.addNewText);
@@ -169,7 +178,7 @@ public class MainActivity extends FragmentActivity {
             //Cancel the just added item name from the editText
             newItemField.setText("");
         }
-    }
+    }*/
 
     @Override
     protected void onPause(){

@@ -21,6 +21,10 @@ public class Items implements Serializable{
         return checkedItems;
     }
 
+    public int getTotalSize(){
+        return checkedItems.size()+nonCheckedItems.size();
+    }
+
     public void addNonCheckedItem(String item){
         nonCheckedItems.add(item);
     }
