@@ -11,22 +11,6 @@ public class MyItemTouchHelper extends ItemTouchHelper.Callback {
         myAdapter = adapter;
     }
 
-   /* @Override
-    public int getMovementFlags(RecyclerView recyclerView,
-                                RecyclerView.ViewHolder viewHolder) {
-        int dragFlagsNormal = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        int dragFlagsLast=ItemTouchHelper.UP;
-        int dragFlagsFirst=ItemTouchHelper.DOWN;
-        int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-        int numOfNonChecked=((ItemsAdapter)recyclerView.getAdapter()).getNonCheckedCount();
-        if(viewHolder.getAdapterPosition()==numOfNonChecked-1)
-            return makeMovementFlags(dragFlagsLast,swipeFlags);
-        else if(viewHolder.getAdapterPosition()==numOfNonChecked+1)
-            return makeMovementFlags(dragFlagsFirst,swipeFlags);
-        else
-            return makeMovementFlags(dragFlagsNormal, swipeFlags);
-    }*/
-
     @Override
     public int getMovementFlags(RecyclerView recyclerView,
                                 RecyclerView.ViewHolder viewHolder) {

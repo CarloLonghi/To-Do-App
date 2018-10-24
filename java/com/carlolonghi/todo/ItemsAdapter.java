@@ -49,22 +49,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    /*public static class LastItemViewHolder extends RecyclerView.ViewHolder {
-        public LinearLayout myCheckBoxContainer;
-        public LastItemViewHolder(LinearLayout checkBox) {
-            super(checkBox);
-            myCheckBoxContainer = checkBox;
-        }
-    }
-
-    public static class FirstCheckedItemsViewHolder extends RecyclerView.ViewHolder {
-        public LinearLayout myCheckBoxContainer;
-        public FirstCheckedItemsViewHolder(LinearLayout checkBox) {
-            super(checkBox);
-            myCheckBoxContainer = checkBox;
-        }
-    }*/
-
     public ItemsAdapter(Map<String,Items> items, String listTitle) {
         this.items=items;
         this.listTitle=listTitle;
@@ -128,8 +112,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
+        //Get element from your dataset at this position
+        //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
         if(itemType==ADDNEW_TYPE){
             //COMPLETE WITH CODE HERE
@@ -182,53 +166,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyItemRemoved(position);
     }
 
-    /*@Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        if(fromPosition<items.get(listTitle).getNonCheckedItems().size()){
-            if (fromPosition < toPosition) {
-                boolean overBound=false;
-                for (int i = fromPosition; i < toPosition; i++) {
-                    if(i<(items.get(listTitle).getNonCheckedItems().size()-1))
-                        Collections.swap(items.get(listTitle).getNonCheckedItems(), i, i + 1);
-                }
-            } else {
-                for (int i = fromPosition; i > toPosition; i--) {
-                    Collections.swap(items.get(listTitle).getNonCheckedItems(), i, i - 1);
-                }
-            }
-            notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-        else{
-            if (fromPosition < toPosition) {
-                for (int i = fromPosition; i < toPosition; i++) {
-                    Collections.swap(items.get(listTitle).getCheckedItems(), i-1, i );
-                }
-            } else {
-                for (int i = fromPosition; i > toPosition; i--) {
-                    if(i>items.get(listTitle).getNonCheckedItems().size()+1)
-                        Collections.swap(items.get(listTitle).getCheckedItems(), i-1, i - 2);
-                }
-            }
-            notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-    }*/
-
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         int nonCheckedSize=items.get(listTitle).getNonCheckedItems().size();
         if(fromPosition<nonCheckedSize){
             if(toPosition>nonCheckedSize-1){
-                int dragFlagsLast= ItemTouchHelper.UP;
-                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-                //MyItemTouchHelper.makeMovementFlags(dragFlagsLast,swipeFlags);
                 return true;
             }
             else {
-                int dragFlagsNormal = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-                //MyItemTouchHelper.makeMovementFlags(dragFlagsNormal,swipeFlags);
                 Collections.swap(items.get(listTitle).getNonCheckedItems(), fromPosition, toPosition);
                 notifyItemMoved(fromPosition, toPosition);
                 return true;
@@ -236,15 +181,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         else{
             if(toPosition<nonCheckedSize+1) {
-                int dragFlagsFirst=ItemTouchHelper.DOWN;
-                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-                //MyItemTouchHelper.makeMovementFlags(dragFlagsFirst,swipeFlags);
                 return true;
             }
             else{
-                int dragFlagsNormal = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-                //MyItemTouchHelper.makeMovementFlags(dragFlagsNormal,swipeFlags);
                 Collections.swap(items.get(listTitle).getCheckedItems(), fromPosition - nonCheckedSize - 1, toPosition - nonCheckedSize - 1);
                 notifyItemMoved(fromPosition, toPosition);
                 return true;
@@ -256,10 +195,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
         return items.get(listTitle).getTotalSize()+1;
-    }
-
-    public int getNonCheckedCount(){
-        return items.get(listTitle).getNonCheckedItems().size();
     }
 
     public class addNewClickListener implements View.OnClickListener{
@@ -295,20 +230,4 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         }
     }
-
-    /*@Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View item=inflater.inflate(R.layout.item,parent,false);
-        CheckBox checkBox=(CheckBox) item.findViewById(R.id.itemCheckbox);
-        checkBox.setText(items.get(position));
-        //Add the listener for the checkbox;
-
-        return item;
-    }
-
-    @Override
-    public void add(String item){
-        this.items.add(item);
-    }*/
 }

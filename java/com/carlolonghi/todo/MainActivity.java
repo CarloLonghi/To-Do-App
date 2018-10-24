@@ -89,14 +89,6 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-
-        //Whenever the activity is resumed we need to update the NonChekedItemsFragment's height to make sure every item is visible
-        //nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
-    }
-
     //This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -141,48 +133,6 @@ public class MainActivity extends FragmentActivity {
         String txt=savedInstanceState.getString("ENTERING_TEXT");
         editText.setText(txt);
         editText.setSelection(txt.length());
-    }*/
-
-    /*//Handles the click of the button that adds the new item
-    public void onClick(View view){
-        //Gets the newItem name from the EditText
-        EditText newItemField=(EditText) findViewById(R.id.addNewText);
-        String newItem=newItemField.getText().toString();
-
-        //Checks if the newItem has an empty name
-        if(newItem.equals("")){
-            Context context = getApplicationContext();
-            CharSequence text = "You can't add an empty item";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.setGravity(Gravity.CENTER,0,0);
-            toast.show();
-        }
-        //Checks if the new newItem name already exists
-        else if(items.get(listTitle).getNonCheckedItems().contains(newItem)){
-            Context context = getApplicationContext();
-            CharSequence text = "Item already exists";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.setGravity(Gravity.CENTER,0,0);
-            toast.show();
-        }
-        //Add the new item if everything is ok
-        else {
-            //Save the new item
-            items.get(listTitle).addNonCheckedItem(newItem);
-            model.updateItemsOnFile(this.getBaseContext());
-
-            //Add the new item to the fragment here
-            FrameLayout frameLayout=(FrameLayout)findViewById(R.id.fragmentContainer);
-            NonCheckedItemsFragment nonCheckedItemsFragment=(NonCheckedItemsFragment)getSupportFragmentManager().findFragmentById(frameLayout.getId());
-            nonCheckedItemsFragment.addItem(newItem);
-
-            //Cancel the just added item name from the editText
-            newItemField.setText("");
-        }
     }*/
 
     @Override
