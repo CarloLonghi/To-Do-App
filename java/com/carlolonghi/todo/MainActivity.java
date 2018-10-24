@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -75,26 +76,9 @@ public class MainActivity extends FragmentActivity {
         myAdapter = new ItemsAdapter(items,listTitle);
         myRecyclerView.setAdapter(myAdapter);
 
-       /* //This block of instructions regulates the correct behaviour of the EditText used to add the new items
-        //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
-        //the item is added to the list as the Add button has been pressed
-        EditText newItem=(EditText)findViewById(R.id.addNewText);
-        newItem.setHorizontallyScrolling(false);
-        newItem.setMaxLines(Integer.MAX_VALUE);
-        newItem.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        newItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch(actionId){
-                    case EditorInfo.IME_ACTION_DONE:
-                        //Calls the onClick of the Add button if the newLine is pressed
-                        onClick(findViewById(R.id.addNewButton));
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });*/
+        ItemTouchHelper.Callback callback = new MyItemTouchHelper((MyItemTouchHelper.ItemTouchHelperAdapter)myAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(myRecyclerView);
     }
 
     //The function that regulates the behaviour of the back button that is on top-left of the screen
@@ -111,6 +95,27 @@ public class MainActivity extends FragmentActivity {
 
         //Whenever the activity is resumed we need to update the NonChekedItemsFragment's height to make sure every item is visible
         //nonCheckedItemsFragment.updateFragmentHeight(nonCheckedItemsFragment.getListView());
+    }
+
+    //This method saves an InstanceState when the activity is destroyed
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+
+        // Save the user's current state
+        EditText editText=(EditText)((LinearLayout)myRecyclerView.getChildAt(items.get(listTitle).getNonCheckedItems().size())).getChildAt(0);
+        myLayoutManager.onSaveInstanceState();
+        savedInstanceState.putString("ENTERING_TEXT", editText.getText().toString());
+    }
+
+    //Restores the activity from the Instance State
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        //Restores the text that the user was entering in the edittext
+        String text=savedInstanceState.getString("ENTERING_TEXT");
+
     }
 
    /* //This method saves an InstanceState when the activity is destroyed

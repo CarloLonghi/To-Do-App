@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -107,6 +109,7 @@ public class MenuActivity extends FragmentActivity {
 
         //read Items From File
         items=model.getItems();
+
     }
 
     //This method saves an InstanceState when the activity is destroyed
@@ -170,6 +173,8 @@ public class MenuActivity extends FragmentActivity {
             newListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    v.setEnabled(false);
+
                     //Get the title and remove the edittext
                     ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
                     LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
@@ -275,10 +280,17 @@ public class MenuActivity extends FragmentActivity {
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
         insertPoint.addView(newListLayout,layoutParams);
         isPresent=true;
+        //Sets the cursor on the edittext and opens the keyboard
+        newListText.requestFocus();
+        Activity activity = (Activity) this;
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(newListText, InputMethodManager.SHOW_IMPLICIT);
         //Sets the listener for the Add Button
         newListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
+
                 //Get the title and remove the edittext
                 ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
                 LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
@@ -405,6 +417,21 @@ public class MenuActivity extends FragmentActivity {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    //To prevent from double clicking a button
+    public static void avoidDoubleClicks(final View view) {
+        final long DELAY_IN_MS = 900;
+        if (!view.isClickable()) {
+            return;
+        }
+        view.setClickable(false);
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setClickable(true);
+            }
+        }, DELAY_IN_MS);
     }
 
 }
