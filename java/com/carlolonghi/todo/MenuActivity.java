@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,10 +52,13 @@ import java.util.Scanner;
 
 public class MenuActivity extends FragmentActivity {
 
-    SharedPreferences prefs = null;
-    private Map<String,LinkedHashMap<String,Boolean>> items;
-    private Button contextMenuList;
+    private Map<String,Items> items;
     private MyViewModel model;
+
+    //A variable used to remember the button wich has been long-pressed to show the menu
+    private Button contextMenuList;
+
+    //The boolean variable that says if the EditText and Button for the new list are present in the activity
     private boolean isPresent=false;
 
     @Override
@@ -61,6 +66,7 @@ public class MenuActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
+        //Gets the ViewModel that reads and holds the application data and read the Map of items
         model = ViewModelProviders.of(this).get(MyViewModel.class);
         this.items=model.getItems();
 
@@ -73,15 +79,20 @@ public class MenuActivity extends FragmentActivity {
             //readItemsFromFile();
             items=model.getItems();
             ((LinearLayout)findViewById(R.id.ListTitles)).removeAllViews();
+            //For every list of items in the file adds a new Button with its name
             for (String list : items.keySet()) {
                 ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                 Button newItemAddedButton = new Button(this);
                 newItemAddedButton.setText(list);
+
                 registerForContextMenu(newItemAddedButton);
+
+                //Sets the layout params for the list of items
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.setMargins(48, 48, 48, 0);
+
                 insertPoint.addView(newItemAddedButton, layoutParams);
 
                 //Setting the listener for the list buttons
@@ -96,8 +107,9 @@ public class MenuActivity extends FragmentActivity {
     protected void onResume(){
         super.onResume();
 
-        //readItemsFromFile();
+        //read Items From File
         items=model.getItems();
+
     }
 
     //This method saves an InstanceState when the activity is destroyed
@@ -121,7 +133,7 @@ public class MenuActivity extends FragmentActivity {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore state members from saved instance
+        //Restore views' state from saved instance
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
         if((isPresent=savedInstanceState.getBoolean("isPresent"))) {
             //Add the edittext where the user has to type the title of the new list
@@ -129,36 +141,47 @@ public class MenuActivity extends FragmentActivity {
             newListLayout.setOrientation(LinearLayout.HORIZONTAL);
             EditText newListText=new EditText(this);
             Button newListButton=new Button(this);
+
+            //The layout params for the LinearLayout that contains the EditText and AddButton
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(48,48,48,0);
 
+            //The layout params for the EditText
             LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,13F);
             layoutParams1.setMargins(0,0,15,0);
 
+            //The layout params for the Add Button
             LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1F);
             layoutParams2.setMargins(0,0,0,0);
+
+            //Add the EditText, Add Button and their container to the activity
             newListButton.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
             newListText.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
             newListButton.setText("ADD");
             newListLayout.addView(newListText,layoutParams1);
             newListLayout.addView(newListButton,layoutParams2);
             insertPoint.addView(newListLayout,layoutParams);
+
+            //Restores the text contained in the EditText when it was destroyed
             String txt = savedInstanceState.getString("ENTERING_TEXT");
             newListText.setText(txt);
             newListText.setSelection(txt.length());
+            //Sets the listener for the Add Button
             newListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    v.setEnabled(false);
+
                     //Get the title and remove the edittext
-                    //EditText editText = (EditText) findViewById(R.id.newListToAdd);
                     ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
                     LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
                     EditText editText=(EditText)container.getChildAt(0);
                     String newListTitle = editText.getText().toString();
 
+                    //Checks if the new newList name already exists
                     if(items.keySet().contains(newListTitle.toUpperCase())){
                         Context context = getApplicationContext();
                         CharSequence text = "List already exists";
@@ -168,6 +191,7 @@ public class MenuActivity extends FragmentActivity {
                         toast.setGravity(Gravity.CENTER,0,0);
                         toast.show();
                     }
+                    //Add the new list if everything is ok
                     else if(!newListTitle.equals("")) {
                         //Delete the add editText and Button from layout
                         ((ViewManager) editText.getParent()).removeView(editText);
@@ -176,7 +200,6 @@ public class MenuActivity extends FragmentActivity {
                         isPresent = false;
 
                         //Add the new list to the page
-                        //ViewGroup insertPoint = (LinearLayout) findViewById(R.id.ListTitles);
                         Button newItemAddedButton = new Button(v.getContext());
                         newItemAddedButton.setText(newListTitle);
                         registerForContextMenu(newItemAddedButton);
@@ -189,7 +212,7 @@ public class MenuActivity extends FragmentActivity {
                         //Setting the listener for the list buttons
                         newItemAddedButton.setOnClickListener(new ListButtonListener());
 
-                        items.put(newListTitle.toUpperCase(), new LinkedHashMap<String, Boolean>());
+                        items.put(newListTitle.toUpperCase(), new Items());
                         updateItemsOnFile();
 
                         //Reactivate the newListButton
@@ -202,6 +225,7 @@ public class MenuActivity extends FragmentActivity {
                         intent.putExtra("com.carlolonghi.todo.TITLE", list);
                         newItemAddedButton.getContext().startActivity(intent);
                     }
+                    //Checks if the newList has an empty name
                     else{
                         Context context = getApplicationContext();
                         CharSequence text = "You can't add an empty list";
@@ -231,17 +255,23 @@ public class MenuActivity extends FragmentActivity {
         newListLayout.setOrientation(LinearLayout.HORIZONTAL);
         EditText newListText=new EditText(this);
         final Button newListButton=new Button(this);
+
+        //The layout params for the LinearLayout that contains the EditText and AddButton
         LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(48,48,48,0);
 
+        //The layout params for the EditText
         LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,13F);
         layoutParams1.setMargins(0,0,15,0);
 
+        //The layout params for the Add Button
         LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1F);
         layoutParams2.setMargins(0,0,0,0);
+
+        //Add the EditText, Add Button and their container to the activity
         newListButton.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
         newListText.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
         newListButton.setText("ADD");
@@ -250,10 +280,17 @@ public class MenuActivity extends FragmentActivity {
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
         insertPoint.addView(newListLayout,layoutParams);
         isPresent=true;
-
+        //Sets the cursor on the edittext and opens the keyboard
+        newListText.requestFocus();
+        Activity activity = (Activity) this;
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(newListText, InputMethodManager.SHOW_IMPLICIT);
+        //Sets the listener for the Add Button
         newListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
+
                 //Get the title and remove the edittext
                 ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
                 LinearLayout container=(LinearLayout)insertPoint.getChildAt(insertPoint.getChildCount()-1);
@@ -290,7 +327,7 @@ public class MenuActivity extends FragmentActivity {
                     //Setting the listener for the list buttons
                     newItemAddedButton.setOnClickListener(new ListButtonListener());
 
-                    items.put(newListTitle.toUpperCase(), new LinkedHashMap<String, Boolean>());
+                    items.put(newListTitle.toUpperCase(), new Items());
                     updateItemsOnFile();
 
                     //Reactivate the newListButton
@@ -333,7 +370,7 @@ public class MenuActivity extends FragmentActivity {
             populateLists();
         }
         else if(item.getTitle().equals("Bookmark")){
-            LinkedHashMap<String,LinkedHashMap<String,Boolean>> tmp=new LinkedHashMap<>();
+            LinkedHashMap<String,Items> tmp=new LinkedHashMap<>();
             tmp.put(contextMenuList.getText().toString(),items.get(contextMenuList.getText()));
             for(String key : items.keySet()){
                 if(!key.equals(contextMenuList.getText().toString()))
@@ -380,6 +417,21 @@ public class MenuActivity extends FragmentActivity {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    //To prevent from double clicking a button
+    public static void avoidDoubleClicks(final View view) {
+        final long DELAY_IN_MS = 900;
+        if (!view.isClickable()) {
+            return;
+        }
+        view.setClickable(false);
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setClickable(true);
+            }
+        }, DELAY_IN_MS);
     }
 
 }
