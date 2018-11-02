@@ -25,13 +25,11 @@ public class MyViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public Map<String,Items> getItems() {
-        items = new LinkedHashMap<>();
-        loadItems();
+    public LinkedHashMap<String,Items> getItems() {
         return items;
     }
 
-    private void loadItems(){
+    public LinkedHashMap<String,Items> loadItems(){
         items=new LinkedHashMap<>();
         try{
             FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
@@ -42,6 +40,11 @@ public class MyViewModel extends AndroidViewModel {
         } catch (Exception e){
             e.printStackTrace();
         }
+        return items;
+    }
+
+    public void addList(String listTitle){
+        items.put(listTitle.toUpperCase(),new Items());
     }
 
     public void updateItemsOnFile(Context context){
@@ -54,5 +57,9 @@ public class MyViewModel extends AndroidViewModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isEmpty(){
+        return items.isEmpty();
     }
 }

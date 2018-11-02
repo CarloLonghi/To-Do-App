@@ -12,6 +12,8 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -52,8 +54,11 @@ import java.util.Scanner;
 
 public class MenuActivity extends FragmentActivity {
 
-    private Map<String,Items> items;
+    private LinkedHashMap<String,Items> items;
     private MyViewModel model;
+    private RecyclerView myRecyclerView;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager myLayoutManager;
 
     //A variable used to remember the button wich has been long-pressed to show the menu
     private Button contextMenuList;
@@ -65,15 +70,36 @@ public class MenuActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        myRecyclerView=(RecyclerView) findViewById(R.id.listsView);
+
+        // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
+        myRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        myLayoutManager = new LinearLayoutManager(this);
+        myRecyclerView.setLayoutManager(myLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         model = ViewModelProviders.of(this).get(MyViewModel.class);
-        this.items=model.getItems();
+        this.items=model.loadItems();
 
-        populateLists();
+        if(model.isEmpty()){
+            myRecyclerView.setVisibility(View.GONE);
+            ((TextView)findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.VISIBLE);
+        }
+        else{
+            ((TextView)findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
+            myRecyclerView.setVisibility(View.VISIBLE);
+        }
+
+        // specify an adapter (see also next example)
+        myAdapter = new ListsAdapter(model);
+        myRecyclerView.setAdapter(myAdapter);
+
+        //populateLists();
     }
 
-    private void populateLists(){
+    /*private void populateLists(){
         items=new LinkedHashMap<>();
         try {
             //readItemsFromFile();
@@ -101,7 +127,7 @@ public class MenuActivity extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
     protected void onResume(){
@@ -112,7 +138,7 @@ public class MenuActivity extends FragmentActivity {
 
     }
 
-    //This method saves an InstanceState when the activity is destroyed
+    /*//This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current state
@@ -238,54 +264,20 @@ public class MenuActivity extends FragmentActivity {
                 }
             });
         }
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-
-        this.updateItemsOnFile();
-    }
+    }*/
 
     public void onClick(final View addButton) {
-        addButton.setClickable(false);
-
+        changeAddButtonStatus();
+        myRecyclerView.setVisibility(View.VISIBLE);
+        ((TextView)findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
         //Add the edittext where the user has to type the title of the new list
-        LinearLayout newListLayout=new LinearLayout(this);
-        newListLayout.setOrientation(LinearLayout.HORIZONTAL);
-        EditText newListText=new EditText(this);
-        final Button newListButton=new Button(this);
+        //items.put("AddingNewList",null);
+        //((ListsAdapter) myAdapter).deleteEmptyMessage(myLayoutManager);
+        ((ListsAdapter)myAdapter).setAddNewPresent(true);
+        myAdapter.notifyItemInserted(model.getItems().keySet().size());
+        //myAdapter.notifyDataSetChanged();
 
-        //The layout params for the LinearLayout that contains the EditText and AddButton
-        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(48,48,48,0);
-
-        //The layout params for the EditText
-        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,13F);
-        layoutParams1.setMargins(0,0,15,0);
-
-        //The layout params for the Add Button
-        LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1F);
-        layoutParams2.setMargins(0,0,0,0);
-
-        //Add the EditText, Add Button and their container to the activity
-        newListButton.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-        newListText.setWidth(0); newListButton.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-        newListButton.setText("ADD");
-        newListLayout.addView(newListText,layoutParams1);
-        newListLayout.addView(newListButton,layoutParams2);
-        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
-        insertPoint.addView(newListLayout,layoutParams);
-        isPresent=true;
-        //Sets the cursor on the edittext and opens the keyboard
-        newListText.requestFocus();
-        Activity activity = (Activity) this;
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(newListText, InputMethodManager.SHOW_IMPLICIT);
-        //Sets the listener for the Add Button
+        /*//Sets the listener for the Add Button
         newListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -349,7 +341,7 @@ public class MenuActivity extends FragmentActivity {
                     toast.show();
                 }
             }
-        });
+        });*/
     }
 
     //Creates the context menu when the lists are long-pressed
@@ -361,7 +353,12 @@ public class MenuActivity extends FragmentActivity {
         this.contextMenuList=(Button)v;
     }
 
-    //Manages the context menu choices
+    public void changeAddButtonStatus(){
+        Button addButton=(Button)findViewById(R.id.newListButton);
+        addButton.setClickable(addButton.isClickable() ? false:true);
+    }
+
+/*    //Manages the context menu choices
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if(item.getTitle().equals("Delete")){
@@ -383,9 +380,9 @@ public class MenuActivity extends FragmentActivity {
             //LA LISTA EVIDENZIATA DEVE AVERE UN COLORE DIVERSO, STILE DIVERSO ECC.
         }
         return true;
-    }
+    }*/
 
-    @Override
+/*    @Override
     public void onBackPressed() {
         if(isPresent){
             ViewGroup insertPoint = (ViewGroup) findViewById(R.id.ListTitles);
@@ -405,33 +402,13 @@ public class MenuActivity extends FragmentActivity {
         }
         else
             super.onBackPressed();
-    }
+    }*/
 
-    private void updateItemsOnFile(){
-        try {
-            FileOutputStream outputStream = this.openFileOutput("items.dat", MODE_PRIVATE);
-            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(items);
-            writer.close();
-            outputStream.close();
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+    @Override
+    protected void onPause(){
+        super.onPause();
 
-    //To prevent from double clicking a button
-    public static void avoidDoubleClicks(final View view) {
-        final long DELAY_IN_MS = 900;
-        if (!view.isClickable()) {
-            return;
-        }
-        view.setClickable(false);
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                view.setClickable(true);
-            }
-        }, DELAY_IN_MS);
+        //Save the items state on file using the ViewModel whenever the activity is paused
+        model.updateItemsOnFile(this.getBaseContext());
     }
-
 }

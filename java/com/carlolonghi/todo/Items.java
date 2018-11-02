@@ -25,10 +25,6 @@ public class Items implements Serializable{
         return checkedItems.size()+nonCheckedItems.size();
     }
 
-    public void addNonCheckedItem(String item){
-        nonCheckedItems.add(item);
-    }
-
     public void remove(int position){
         if(position>=nonCheckedItems.size()){
             checkedItems.remove(position-nonCheckedItems.size()-1);
@@ -40,5 +36,9 @@ public class Items implements Serializable{
 
     public void addCheckedItem(String item){
         checkedItems.add(item);
+    }
+
+    public void addNonCheckedItem(String item){
+        nonCheckedItems.add(item);
     }
 }

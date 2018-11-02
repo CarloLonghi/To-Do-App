@@ -47,6 +47,7 @@ public class MainActivity extends FragmentActivity {
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
+    private String editingText="";
 
 
     @Override
@@ -64,7 +65,7 @@ public class MainActivity extends FragmentActivity {
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         this.model = ViewModelProviders.of(this).get(MyViewModel.class);
-        this.items=model.getItems();
+        this.items=model.loadItems();
 
         //Gets the title of the list and set it to the Activity
         Intent intent = getIntent();
@@ -72,8 +73,8 @@ public class MainActivity extends FragmentActivity {
         this.listTitle=title.toUpperCase();
         setTitle(listTitle.toUpperCase());
 
-        // specify an adapter (see also next example)
-        myAdapter = new ItemsAdapter(items,listTitle);
+        // specify an adapter
+        myAdapter = new ItemsAdapter(listTitle,model);
         myRecyclerView.setAdapter(myAdapter);
 
         ItemTouchHelper.Callback callback = new MyItemTouchHelper((MyItemTouchHelper.ItemTouchHelperAdapter)myAdapter);
@@ -89,7 +90,7 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    //This method saves an InstanceState when the activity is destroyed
+/*    //This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can save the view hierarchy state
@@ -108,15 +109,15 @@ public class MainActivity extends FragmentActivity {
         //Restores the text that the user was entering in the edittext
         String text=savedInstanceState.getString("ENTERING_TEXT");
 
-    }
+    }*/
 
-   /* //This method saves an InstanceState when the activity is destroyed
+    //This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current state
         savedInstanceState.putString("LIST_TITLE", this.listTitle);
         EditText editText=(EditText)findViewById(R.id.addNewText);
-        savedInstanceState.putString("ENTERING_TEXT", editText.getText().toString());
+        savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -129,11 +130,13 @@ public class MainActivity extends FragmentActivity {
 
         // Restore views' state from saved instance
         this.listTitle = savedInstanceState.getString("LIST_TITLE");
-        EditText editText=(EditText)findViewById(R.id.addNewText);
-        String txt=savedInstanceState.getString("ENTERING_TEXT");
-        editText.setText(txt);
-        editText.setSelection(txt.length());
-    }*/
+        ((ItemsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
+
+        // EditText editText=(EditText)findViewById(R.id.addNewText);
+        //String txt=savedInstanceState.getString("ENTERING_TEXT");
+        //editText.setText(txt);
+        //editText.setSelection(txt.length());
+    }
 
     @Override
     protected void onPause(){
