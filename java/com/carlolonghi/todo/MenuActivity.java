@@ -81,7 +81,7 @@ public class MenuActivity extends FragmentActivity {
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         model = ViewModelProviders.of(this).get(MyViewModel.class);
-        this.items=model.loadItems();
+        this.items=model.getItems();
 
         if(model.isEmpty()){
             myRecyclerView.setVisibility(View.GONE);
@@ -274,8 +274,8 @@ public class MenuActivity extends FragmentActivity {
         //items.put("AddingNewList",null);
         //((ListsAdapter) myAdapter).deleteEmptyMessage(myLayoutManager);
         ((ListsAdapter)myAdapter).setAddNewPresent(true);
-        myAdapter.notifyItemInserted(model.getItems().keySet().size());
-        //myAdapter.notifyDataSetChanged();
+        model.addList("addnew");
+        myAdapter.notifyDataSetChanged();
 
         /*//Sets the listener for the Add Button
         newListButton.setOnClickListener(new View.OnClickListener() {

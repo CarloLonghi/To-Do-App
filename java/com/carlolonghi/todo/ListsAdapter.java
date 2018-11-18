@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
@@ -37,11 +39,13 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public static class ListViewHolder extends RecyclerView.ViewHolder{
         public Button myListButton;
+        public Button contextMenuList;
         public ListViewHolder(Button listButton) {
             super(listButton);
             myListButton = listButton;
         }
     }
+
 
     public static class AddNewListHolder extends RecyclerView.ViewHolder{
         public LinearLayout addNewLayout;
@@ -68,11 +72,15 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        int itemsSize=model.getItems().size();
-        if(position<itemsSize)
+        int itemsSize=model.getKeySet().size();
+        if(position==itemsSize-1 && model.getKeySet().get(itemsSize-1).equals("ADDNEW"))
+            return ADDNEW_TYPE;
+        else return NEWLIST_TYPE;
+
+        /*if(position<itemsSize)
             return NEWLIST_TYPE;
         else
-            return ADDNEW_TYPE;
+           return ADDNEW_TYPE;*/
     }
 
     @Override
@@ -84,7 +92,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 newList.setOnClickListener(new ListButtonListener());
                 return vh;
             case ADDNEW_TYPE:
-                final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_layout,parent,false);
+                LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_layout,parent,false);
                 AddNewListHolder vh1=new AddNewListHolder(addNew);
                 Button addButton=(Button)addNew.findViewById(R.id.addNewButton);
                 addButton.setOnClickListener(new AddNewClickListener());
@@ -101,7 +109,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
                                 //Calls the onClick of the Add button if the newLine is pressed
-                                (new ListsAdapter.AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
+                                Button button=(Button)((LinearLayout)v.getParent()).getChildAt(1);
+                                //(new ListsAdapter.AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
+                                (new ListsAdapter.AddNewClickListener()).onClick(button);
                                 //onClick(findViewById(R.id.addNewButton));
                                 return true;
                             default:
@@ -135,12 +145,12 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String text=keySet.get(position);
             Button listButton=((ListViewHolder)holder).myListButton;
             listButton.setText(text);
+
         }
         else if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((AddNewListHolder)holder).addNewLayout.getChildAt(0));
             editText.setText(editingText);
             editText.setSelection(editingText.length());
-
         }
     }
 
@@ -148,10 +158,12 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        if(!isAddNewPresent)
+        return model.getKeySet().size();
+
+        /*if(!isAddNewPresent)
             return model.getItems().keySet().size();
         else
-            return model.getItems().keySet().size()+1;
+            return model.getItems().keySet().size()+1;*/
     }
 
 
@@ -191,10 +203,13 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 String text=editText.getText().toString();
                 //items.remove("AddingNewList");
                 //((RecyclerView) container.getParent()).getAdapter().notifyItemRemoved(items.keySet().size());
-                ((RecyclerView) container.getParent()).getAdapter().notifyItemRemoved(model.getItems().keySet().size());
+                model.removeList("ADDNEW");
+                //((RecyclerView) container.getParent()).getAdapter().notifyItemRemoved(model.getKeySet().size()-1);
+                ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 model.addList(text);
                 setAddNewPresent(false);
-                ((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(model.getItems().keySet().size()-1);
+                //((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(model.getKeySet().size()-1);
+                ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 editText.setText("");
                 editingText="";
                 ((MenuActivity)view.getContext()).changeAddButtonStatus();
