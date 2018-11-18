@@ -60,9 +60,6 @@ public class MenuActivity extends FragmentActivity {
     private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
 
-    //A variable used to remember the button wich has been long-pressed to show the menu
-    private Button contextMenuList;
-
     //The boolean variable that says if the EditText and Button for the new list are present in the activity
     private boolean isPresent=false;
 
@@ -71,6 +68,7 @@ public class MenuActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         myRecyclerView=(RecyclerView) findViewById(R.id.listsView);
+        registerForContextMenu(myRecyclerView);
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         myRecyclerView.setHasFixedSize(true);
@@ -344,43 +342,33 @@ public class MenuActivity extends FragmentActivity {
         });*/
     }
 
-    //Creates the context menu when the lists are long-pressed
+/*    //Creates the context menu when the lists are long-pressed
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, v.getId(), 0, "Delete");
         menu.add(0, v.getId(), 0, "Bookmark");
         this.contextMenuList=(Button)v;
-    }
+    }*/
 
     public void changeAddButtonStatus(){
         Button addButton=(Button)findViewById(R.id.newListButton);
         addButton.setClickable(addButton.isClickable() ? false:true);
     }
 
-/*    //Manages the context menu choices
+    //Manages the context menu choices
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        Button contextMenuList=((ListsAdapter)myAdapter).getContextMenuList();
         if(item.getTitle().equals("Delete")){
-            items.remove(contextMenuList.getText().toString().toUpperCase());
-            updateItemsOnFile();
-            populateLists();
+            model.removeList(contextMenuList.getText().toString().toUpperCase());
+            myAdapter.notifyDataSetChanged();
         }
         else if(item.getTitle().equals("Bookmark")){
-            LinkedHashMap<String,Items> tmp=new LinkedHashMap<>();
-            tmp.put(contextMenuList.getText().toString(),items.get(contextMenuList.getText()));
-            for(String key : items.keySet()){
-                if(!key.equals(contextMenuList.getText().toString()))
-                    tmp.put(key,items.get(key));
-            }
-            items=tmp;
-            updateItemsOnFile();
-            populateLists();
-
             //LA LISTA EVIDENZIATA DEVE AVERE UN COLORE DIVERSO, STILE DIVERSO ECC.
         }
         return true;
-    }*/
+    }
 
 /*    @Override
     public void onBackPressed() {

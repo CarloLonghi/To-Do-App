@@ -32,17 +32,25 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public boolean isAddNewPresent;
     private String editingText;
     private MyViewModel model;
+    private Button contextMenuList;
 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
     private static final int VOID_LIST=3;
 
-    public static class ListViewHolder extends RecyclerView.ViewHolder{
+    public static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         public Button myListButton;
-        public Button contextMenuList;
         public ListViewHolder(Button listButton) {
             super(listButton);
             myListButton = listButton;
+            myListButton.setOnCreateContextMenuListener(this);
+        }
+
+        //Creates the context menu when the lists are long-pressed
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+            menu.add(0, v.getId(), 0, "Delete");
+            menu.add(0, v.getId(), 0, "Bookmark");
         }
     }
 
@@ -136,7 +144,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         //Get element from your dataset at this position
         //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
@@ -145,13 +153,28 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String text=keySet.get(position);
             Button listButton=((ListViewHolder)holder).myListButton;
             listButton.setText(text);
-
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //setPosition(holder.getPosition());
+                    setContextMenuList((Button)v);
+                    return false;
+                }
+            });
         }
         else if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((AddNewListHolder)holder).addNewLayout.getChildAt(0));
             editText.setText(editingText);
             editText.setSelection(editingText.length());
         }
+    }
+
+    private void setContextMenuList(Button button){
+        this.contextMenuList=button;
+    }
+
+    public Button getContextMenuList(){
+        return this.contextMenuList;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
