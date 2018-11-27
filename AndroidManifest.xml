@@ -14,7 +14,8 @@
             android:parentActivityName=".MenuActivity">
         </activity>
         <activity
-            android:name=".MenuActivity">
+            android:name=".MenuActivity"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

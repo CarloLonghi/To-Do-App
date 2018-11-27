@@ -28,11 +28,11 @@ import java.util.Map;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Map<String,Items> items;
-    public boolean isAddNewPresent;
+    private boolean isAddNewPresent;
     private String editingText;
     private MyViewModel model;
     private Button contextMenuList;
+    private RecyclerView.LayoutManager myLayoutManager;
 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
@@ -71,9 +71,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public ListsAdapter(MyViewModel model){
+    public ListsAdapter(MyViewModel model, RecyclerView.LayoutManager layoutManager){
         this.model=model;
-        this.items=model.loadItems();
+        this.myLayoutManager=layoutManager;
         this.isAddNewPresent=false;
         this.editingText="";
     }
@@ -100,6 +100,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 newList.setOnClickListener(new ListButtonListener());
                 return vh;
             case ADDNEW_TYPE:
+                setAddNewPresent(true);
                 LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_layout,parent,false);
                 AddNewListHolder vh1=new AddNewListHolder(addNew);
                 Button addButton=(Button)addNew.findViewById(R.id.addNewButton);
@@ -165,6 +166,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         else if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((AddNewListHolder)holder).addNewLayout.getChildAt(0));
             editText.setText(editingText);
+            editText.requestFocus();
+            InputMethodManager imm = (InputMethodManager) editText.getContext().getSystemService(editText.getContext().INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
             editText.setSelection(editingText.length());
         }
     }
@@ -192,6 +196,10 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setAddNewPresent(boolean isPresent){
         this.isAddNewPresent=isPresent;
+    }
+
+    public boolean isAddNewPresent(){
+        return isAddNewPresent;
     }
 
     public void deleteEmptyMessage(RecyclerView.LayoutManager layoutManager){
@@ -224,22 +232,33 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
             else {
                 String text=editText.getText().toString();
-                //items.remove("AddingNewList");
-                //((RecyclerView) container.getParent()).getAdapter().notifyItemRemoved(items.keySet().size());
-                model.removeList("ADDNEW");
-                //((RecyclerView) container.getParent()).getAdapter().notifyItemRemoved(model.getKeySet().size()-1);
-                ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
+                removeAddNew();
                 model.addList(text);
                 setAddNewPresent(false);
-                //((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(model.getKeySet().size()-1);
                 ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 editText.setText("");
                 editingText="";
-                ((MenuActivity)view.getContext()).changeAddButtonStatus();
+                ((MenuActivity)view.getContext()).enableAddButton();
                 Intent intent = new Intent(view.getContext(), MainActivity.class);
                 intent.putExtra("com.carlolonghi.todo.TITLE", text);
                 view.getContext().startActivity(intent);
             }
+        }
+    }
+
+    public void removeAddNew(){
+        if(isAddNewPresent){
+            model.removeList("ADDNEW");
+            setAddNewPresent(false);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void setEditingText(String text){
+        if(isAddNewPresent){
+            EditText editText=(EditText) myLayoutManager.getChildAt(getItemCount()-1);
+            editText.setText(text);
+            editText.setSelection(text.length());
         }
     }
 }
