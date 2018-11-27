@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,15 +24,19 @@ public class MyViewModel extends AndroidViewModel {
 
     public MyViewModel(Application application){
         super(application);
+
+        items=loadItems();
     }
 
-    public Map<String,Items> getItems() {
-        items = new LinkedHashMap<>();
-        loadItems();
+    public LinkedHashMap<String,Items> getItems() {
         return items;
     }
 
-    private void loadItems(){
+    public ArrayList<String> getKeySet(){
+        return new ArrayList<>(items.keySet());
+    }
+
+    public LinkedHashMap<String,Items> loadItems(){
         items=new LinkedHashMap<>();
         try{
             FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
@@ -42,7 +47,14 @@ public class MyViewModel extends AndroidViewModel {
         } catch (Exception e){
             e.printStackTrace();
         }
+        return items;
     }
+
+    public void addList(String listTitle){
+        items.put(listTitle.toUpperCase(),new Items());
+    }
+
+    public void removeList(String listTitle) {items.remove(listTitle);}
 
     public void updateItemsOnFile(Context context){
         try{
@@ -54,5 +66,9 @@ public class MyViewModel extends AndroidViewModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isEmpty(){
+        return items.isEmpty();
     }
 }
