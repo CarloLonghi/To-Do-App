@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#83a8d1</color>
+    <color name="colorPrimary">#edcb1d</color>
+    <color name="colorPrimaryDark">#d3ae0e</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="listViewWhiteDivider">#FFFFFF</color>
-    <color name="my_statusbar_color">#3F51B5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="shadewhite">#fff1b5</color>
+    <color name="yellowShade1">#a9fad327</color>
+    <color name="yellowDarker">#f7c52f</color>
 </resources>
+
+
+<!-- yellow color recovery
+<color name="colorPrimary">#f0dd2c</color>-->

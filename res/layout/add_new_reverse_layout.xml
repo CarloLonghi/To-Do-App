@@ -6,15 +6,6 @@
     android:layout_marginTop="8dp"
     android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/addNewButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/list_button"
-        android:onClick="onClick"
-        android:text="@string/add" />
-
     <EditText
         android:id="@+id/addNewText"
         android:layout_width="wrap_content"
@@ -24,5 +15,14 @@
         android:hint="@string/newListHint"
         android:imeOptions="actionDone"
         android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/addNewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@drawable/list_button"
+        android:onClick="onClick"
+        android:text="@string/add" />
 
 </LinearLayout>

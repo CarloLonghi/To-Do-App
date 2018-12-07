@@ -76,7 +76,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         LinearLayout newItem;
         switch(viewType) {
             case ADDNEW_TYPE:
-                final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_layout,parent,false);
+                final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_reverse_layout,parent,false);
                 AddNewItemViewHolder vh2=new AddNewItemViewHolder(addNew);
                 Button addNewButton=(Button)addNew.findViewById(R.id.addNewButton);
                 addNewButton.setOnClickListener(new AddNewClickListener());

@@ -164,7 +164,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         }
         else if(itemType==ADDNEW_TYPE){
-            EditText editText=((EditText)((AddNewListHolder)holder).addNewLayout.getChildAt(0));
+            EditText editText=((EditText)((AddNewListHolder)holder).addNewLayout.getChildAt(1));
             editText.setText(editingText);
             editText.requestFocus();
             InputMethodManager imm = (InputMethodManager) editText.getContext().getSystemService(editText.getContext().INPUT_METHOD_SERVICE);
@@ -211,7 +211,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public class AddNewClickListener implements View.OnClickListener{
         public void onClick(View view){
             LinearLayout container=(LinearLayout)view.getParent();
-            EditText editText=(EditText)container.getChildAt(0);
+            EditText editText=(EditText)container.getChildAt(1);
             if(editText.getText().toString().equals("")){
                 Context context = view.getContext().getApplicationContext();
                 CharSequence text = "You can't add an empty list";

@@ -1,39 +1,14 @@
 package com.carlolonghi.todo;
 
 
-import android.app.Activity;
-import android.app.ListFragment;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.InputType;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.FileOutputStream;
-import java.io.LineNumberInputStream;
-import java.io.ObjectOutputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import android.arch.lifecycle.ViewModelProviders;
 
@@ -90,27 +65,6 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-/*    //This method saves an InstanceState when the activity is destroyed
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-
-        // Save the user's current state
-        EditText editText=(EditText)((LinearLayout)myRecyclerView.getChildAt(items.get(listTitle).getNonCheckedItems().size())).getChildAt(0);
-        myLayoutManager.onSaveInstanceState();
-        savedInstanceState.putString("ENTERING_TEXT", editText.getText().toString());
-    }
-
-    //Restores the activity from the Instance State
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
-        //Restores the text that the user was entering in the edittext
-        String text=savedInstanceState.getString("ENTERING_TEXT");
-
-    }*/
-
     //This method saves an InstanceState when the activity is destroyed
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -132,10 +86,6 @@ public class MainActivity extends FragmentActivity {
         this.listTitle = savedInstanceState.getString("LIST_TITLE");
         ((ItemsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
 
-        // EditText editText=(EditText)findViewById(R.id.addNewText);
-        //String txt=savedInstanceState.getString("ENTERING_TEXT");
-        //editText.setText(txt);
-        //editText.setSelection(txt.length());
     }
 
     @Override

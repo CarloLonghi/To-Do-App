@@ -3,10 +3,6 @@
     android:id="@+id/listButton"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginRight="8dp"
-    android:background="@color/colorPrimaryDark"
+    android:background="@drawable/list_button"
     android:textSize="18sp">
-
 </Button>

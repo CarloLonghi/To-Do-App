@@ -1,57 +1,20 @@
 package com.carlolonghi.todo;
 
-import android.app.ActionBar;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.app.Activity;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.view.ContextMenu;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+
 
 public class MenuActivity extends FragmentActivity {
 
@@ -60,6 +23,8 @@ public class MenuActivity extends FragmentActivity {
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
+
+    private final int SPACE_BETWEEN_LISTS=40;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +50,22 @@ public class MenuActivity extends FragmentActivity {
         myAdapter = new ListsAdapter(model,myLayoutManager);
         myRecyclerView.setAdapter(myAdapter);
 
+        // sets a vertical space between the recyclerview items
+
+        class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+            private final int verticalSpaceHeight;
+
+            public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
+                this.verticalSpaceHeight = verticalSpaceHeight;
+            }
+
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                       RecyclerView.State state) {
+                outRect.bottom = verticalSpaceHeight;
+            }
+        }
+        myRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
     }
 
     @Override
@@ -123,6 +104,7 @@ public class MenuActivity extends FragmentActivity {
         ((ListsAdapter)myAdapter).setAddNewPresent(true);
         model.addList("addnew");
         myAdapter.notifyDataSetChanged();
+        myRecyclerView.scrollToPosition(model.getKeySet().size()-1);
     }
 
     public void enableAddButton(){
