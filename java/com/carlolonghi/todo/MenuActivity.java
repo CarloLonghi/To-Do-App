@@ -73,7 +73,7 @@ public class MenuActivity extends FragmentActivity {
         super.onResume();
 
         //read Items From File
-        items=model.getItems();
+        items=model.loadItems();
     }
 
     //This method saves an InstanceState when the activity is destroyed
@@ -135,7 +135,6 @@ public class MenuActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         if(((ListsAdapter)myAdapter).isAddNewPresent()){
-
 
             //Delete the add editText and Button from layout
             ((ListsAdapter)myAdapter).removeAddNew();
