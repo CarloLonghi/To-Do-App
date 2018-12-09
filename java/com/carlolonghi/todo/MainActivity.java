@@ -60,8 +60,7 @@ public class MainActivity extends FragmentActivity {
     //The function that regulates the behaviour of the back button that is on top-left of the screen
     public boolean onOptionsItemSelected(MenuItem item){
         //The button make the app go back to MenuActivity
-        Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
-        startActivityForResult(myIntent, 0);
+        finish();
         return true;
     }
 
