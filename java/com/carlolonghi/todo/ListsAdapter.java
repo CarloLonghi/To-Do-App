@@ -3,28 +3,24 @@ package com.carlolonghi.todo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -72,7 +68,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public ListsAdapter(MyViewModel model, RecyclerView.LayoutManager layoutManager){
-        this.model=model;
+        this.model=model;https://stackoverflow.com/questions/6750069/get-the-current-fragment-object
         this.myLayoutManager=layoutManager;
         this.isAddNewPresent=false;
         this.editingText="";
@@ -238,8 +234,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 editText.setText("");
                 editingText="";
-                ((MenuActivity)view.getContext()).enableAddButton();
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
+                Intent intent = new Intent(view.getContext(), ItemsActivity.class);
                 intent.putExtra("com.carlolonghi.todo.TITLE", text);
                 view.getContext().startActivity(intent);
             }

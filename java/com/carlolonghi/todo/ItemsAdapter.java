@@ -30,7 +30,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int NEWITEM_TYPE=1;
     public static final int ADDNEW_TYPE=0;
 
-    private Map<String,Items> items;
+    private Items items;
     private String listTitle;
     private String editingText;
     private MyViewModel model;
@@ -54,16 +54,29 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public ItemsAdapter(String listTitle, MyViewModel model) {
         this.model=model;
-        this.items=model.loadItems();
         this.listTitle=listTitle;
         this.editingText="";
+
+        this.items=model.getItems().get(listTitle);
+    }
+
+    //The adapter's constructo in case we are viewing the todaysItems list
+    public ItemsAdapter(MyViewModel model){
+        this.model=model;
+        this.editingText="";
+
+        this.items=model.getTodaysItems();
+    }
+
+    public Items getItems(){
+        return items;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position==model.getItems().get(listTitle).getNonCheckedItems().size())
+        if(position==items.getNonCheckedItems().size())
             return ADDNEW_TYPE;
-        else if(position<model.getItems().get(listTitle).getNonCheckedItems().size())
+        else if(position<items.getNonCheckedItems().size())
             return NEWITEM_TYPE;
         else
             return CHECKEDITEM_TYPE;
@@ -123,7 +136,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             editText.setSelection(editingText.length());
         }
         else if(itemType==NEWITEM_TYPE){
-            String text=model.getItems().get(listTitle).getNonCheckedItems().get(position);
+            String text=items.getNonCheckedItems().get(position);
             CheckBox checkBox=((CheckBox)((ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
             checkBox.setText(text);
             checkBox.setChecked(false);
@@ -133,19 +146,19 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void onClick(View v) {
                     v.setEnabled(false);
                     String text=((CheckBox)v).getText().toString();
-                    int position=model.getItems().get(listTitle).getNonCheckedItems().indexOf(text);
-                    model.getItems().get(listTitle).getNonCheckedItems().remove(text);
+                    int position=items.getNonCheckedItems().indexOf(text);
+                    items.getNonCheckedItems().remove(text);
                     RecyclerView.Adapter adapter=((RecyclerView)((LinearLayout)v.getParent()).getParent()).getAdapter();
                     adapter.notifyItemRemoved(position);
-                    model.getItems().get(listTitle).addCheckedItem(text);
+                    items.addCheckedItem(text);
                     adapter.notifyItemInserted(getItemCount()-1);
                 }
             });
         }
         else if(itemType==CHECKEDITEM_TYPE){
-            int posOfNewItem=position-model.getItems().get(listTitle).getNonCheckedItems().size()-1;
+            int posOfNewItem=position-items.getNonCheckedItems().size()-1;
             CheckBox checkBox=((CheckBox)((ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
-            checkBox.setText(model.getItems().get(listTitle).getCheckedItems().get(posOfNewItem));
+            checkBox.setText(items.getCheckedItems().get(posOfNewItem));
             checkBox.setChecked(true);
             checkBox.setEnabled(true);
             checkBox.setOnClickListener(new View.OnClickListener() {
@@ -153,12 +166,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void onClick(View v) {
                     ((CheckBox)v).setEnabled(false);
                     String text=((CheckBox)v).getText().toString();
-                    int position=model.getItems().get(listTitle).getCheckedItems().indexOf(text)+model.getItems().get(listTitle).getNonCheckedItems().size()+1;
-                    model.getItems().get(listTitle).getCheckedItems().remove(text);
+                    int position=items.getCheckedItems().indexOf(text)+items.getNonCheckedItems().size()+1;
+                    items.getCheckedItems().remove(text);
                     RecyclerView.Adapter adapter=((RecyclerView)((LinearLayout)v.getParent()).getParent()).getAdapter();
                     adapter.notifyItemRemoved(position);
-                    model.getItems().get(listTitle).addNonCheckedItem(text);
-                    adapter.notifyItemInserted(model.getItems().get(listTitle).getNonCheckedItems().size()-1);
+                    items.addNonCheckedItem(text);
+                    adapter.notifyItemInserted(items.getNonCheckedItems().size()-1);
                 }
             });
         }
@@ -166,19 +179,19 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onItemDismiss(int position) {
-        model.getItems().get(listTitle).remove(position);
+        items.remove(position);
         notifyItemRemoved(position);
     }
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
-        int nonCheckedSize=model.getItems().get(listTitle).getNonCheckedItems().size();
+        int nonCheckedSize=items.getNonCheckedItems().size();
         if(fromPosition<nonCheckedSize){
             if(toPosition>nonCheckedSize-1){
                 return true;
             }
             else {
-                Collections.swap(model.getItems().get(listTitle).getNonCheckedItems(), fromPosition, toPosition);
+                Collections.swap(items.getNonCheckedItems(), fromPosition, toPosition);
                 notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -188,7 +201,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 return true;
             }
             else{
-                Collections.swap(model.getItems().get(listTitle).getCheckedItems(), fromPosition - nonCheckedSize - 1, toPosition - nonCheckedSize - 1);
+                Collections.swap(items.getCheckedItems(), fromPosition - nonCheckedSize - 1, toPosition - nonCheckedSize - 1);
                 notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -198,8 +211,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        LinkedHashMap<String,Items> items=model.getItems();
-        Items tmp=model.getItems().get(listTitle);
+        Items tmp=items;
         return tmp.getTotalSize()+1;
     }
 
@@ -220,7 +232,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 toast.setGravity(Gravity.CENTER,0,0);
                 toast.show();
             }
-            else if(model.getItems().get(listTitle).getNonCheckedItems().contains(editText.getText().toString())){
+            else if(items.getNonCheckedItems().contains(editText.getText().toString())){
                 Context context = view.getContext().getApplicationContext();
                 CharSequence text = "Item already exists";
                 int duration = Toast.LENGTH_SHORT;
@@ -230,8 +242,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 toast.show();
             }
             else {
-                model.getItems().get(listTitle).addNonCheckedItem(editText.getText().toString());
-                ((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(model.getItems().get(listTitle).getNonCheckedItems().size());
+                items.addNonCheckedItem(editText.getText().toString());
+                ((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(items.getNonCheckedItems().size());
                 editText.setText("");
                 editingText="";
             }

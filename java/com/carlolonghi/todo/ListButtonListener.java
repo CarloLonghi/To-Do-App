@@ -7,7 +7,7 @@ import android.widget.Button;
 public class ListButtonListener implements View.OnClickListener {
     public void onClick(View view){
         avoidDoubleClicks(view);
-        Intent intent = new Intent(view.getContext(), MainActivity.class);
+        Intent intent = new Intent(view.getContext(), ItemsActivity.class);
         String list = ((Button) view).getText().toString();
         intent.putExtra("com.carlolonghi.todo.TITLE", list);
         view.getContext().startActivity(intent);
