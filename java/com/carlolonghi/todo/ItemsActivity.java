@@ -36,11 +36,12 @@ public class ItemsActivity extends FragmentActivity {
         myLayoutManager = new LinearLayoutManager(this);
         myRecyclerView.setLayoutManager(myLayoutManager);
 
+        Intent intent = getIntent();
+
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         this.model = ViewModelProviders.of(this).get(MyViewModel.class);
 
         //Gets the title of the list and set it to the Activity
-        Intent intent = getIntent();
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
         this.listTitle=title.toUpperCase();
         setTitle(listTitle.toUpperCase());

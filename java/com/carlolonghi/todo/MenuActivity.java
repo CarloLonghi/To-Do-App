@@ -82,8 +82,8 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
     public void onResume(){
         super.onResume();
 
-        //read Items From File
-        items=model.getItems();
+        this.model.loadItems();
+        this.model.loadTodaysItems();
 
         enableAddButton();
     }
@@ -194,6 +194,6 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         enableAddButton();
 
         //Save the items state on file using the ViewModel whenever the activity is paused
-        model.updateListsOnFile(this.getActivity().getBaseContext());
+        model.updateItemsOnFile(this.getActivity().getBaseContext());
     }
 }

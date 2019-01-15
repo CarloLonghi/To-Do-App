@@ -5,12 +5,15 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.LinearLayout;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -44,6 +47,11 @@ public class MyViewModel extends AndroidViewModel {
             FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
             items = (LinkedHashMap<String,Items>) reader.readObject();
+            inputStream.close();
+            reader.close();
+
+            inputStream = getApplication().getApplicationContext().openFileInput("today.dat");
+            reader = new ObjectInputStream(inputStream);
             todaysItems=(Items) reader.readObject();
             inputStream.close();
             reader.close();
@@ -63,17 +71,9 @@ public class MyViewModel extends AndroidViewModel {
     public void updateItemsOnFile(Context context){
         todaysItems=new Items();
         try{
-            FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            reader.readObject();
-            todaysItems=(Items) reader.readObject();
-            inputStream.close();
-            reader.close();
-
             FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
             writer.writeObject(items);
-            writer.writeObject(todaysItems);
             outputStream.close();
             writer.close();
         } catch (Exception e) {
@@ -88,6 +88,11 @@ public class MyViewModel extends AndroidViewModel {
             ObjectInputStream reader = new ObjectInputStream(inputStream);
             LinkedHashMap<String,Items> temp=items;
             items=(LinkedHashMap<String,Items>)reader.readObject();
+            inputStream.close();
+            reader.close();
+
+            inputStream = getApplication().getApplicationContext().openFileInput("today.dat");
+            reader = new ObjectInputStream(inputStream);
             todaysItems=(Items) reader.readObject();
             inputStream.close();
             reader.close();
@@ -97,6 +102,10 @@ public class MyViewModel extends AndroidViewModel {
             FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
             writer.writeObject(items);
+            outputStream.close();
+            writer.close();
+            outputStream = context.openFileOutput("today.dat", MODE_PRIVATE);
+            writer = new ObjectOutputStream(outputStream);
             writer.writeObject(todaysItems);
             outputStream.close();
             writer.close();
@@ -117,15 +126,8 @@ public class MyViewModel extends AndroidViewModel {
     public void updateTodaysItemsOnFile(Context context){
         items=new LinkedHashMap<>();
         try{
-            FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            items = (LinkedHashMap<String,Items>) reader.readObject();
-            inputStream.close();
-            reader.close();
-
-            FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
+            FileOutputStream outputStream = context.openFileOutput("today.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(items);
             writer.writeObject(todaysItems);
             outputStream.close();
             writer.close();
@@ -164,7 +166,4 @@ public class MyViewModel extends AndroidViewModel {
     public void updateTodaysItems(Items items){
         this.todaysItems=items;
     }
-
-
-
 }
