@@ -1,6 +1,7 @@
 package com.carlolonghi.todo;
 
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -8,9 +9,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toolbar;
+
 import java.util.Map;
-import android.arch.lifecycle.ViewModelProviders;
 
 
 
@@ -18,7 +22,7 @@ public class ItemsActivity extends FragmentActivity {
 
     private String listTitle;
     private Map<String,Items> items;
-    private MyViewModel model;
+    private ItemsViewModel model;
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
@@ -39,7 +43,7 @@ public class ItemsActivity extends FragmentActivity {
         Intent intent = getIntent();
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
-        this.model = ViewModelProviders.of(this).get(MyViewModel.class);
+        this.model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
         //Gets the title of the list and set it to the Activity
         String title = intent.getStringExtra("com.carlolonghi.todo.TITLE");
@@ -53,6 +57,11 @@ public class ItemsActivity extends FragmentActivity {
         ItemTouchHelper.Callback callback = new MyItemTouchHelper((MyItemTouchHelper.ItemTouchHelperAdapter)myAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(myRecyclerView);
+
+        //Set the toolbar visible and sets its text as the title of the list
+        android.support.v7.widget.Toolbar toolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.VISIBLE);
+        ((TextView)toolbar.getChildAt(0)).setText(this.listTitle);
     }
 
     //The function that regulates the behaviour of the back button that is on top-left of the screen

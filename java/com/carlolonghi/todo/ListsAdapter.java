@@ -3,7 +3,6 @@ package com.carlolonghi.todo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.ContextMenu;
@@ -26,7 +25,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean isAddNewPresent;
     private String editingText;
-    private MyViewModel model;
+    private ItemsViewModel model;
     private Button contextMenuList;
     private RecyclerView.LayoutManager myLayoutManager;
 
@@ -67,7 +66,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public ListsAdapter(MyViewModel model, RecyclerView.LayoutManager layoutManager){
+    public ListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager){
         this.model=model;https://stackoverflow.com/questions/6750069/get-the-current-fragment-object
         this.myLayoutManager=layoutManager;
         this.isAddNewPresent=false;
@@ -80,11 +79,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(position==itemsSize-1 && model.getKeySet().get(itemsSize-1).equals("ADDNEW"))
             return ADDNEW_TYPE;
         else return NEWLIST_TYPE;
-
-        /*if(position<itemsSize)
-            return NEWLIST_TYPE;
-        else
-           return ADDNEW_TYPE;*/
     }
 
     @Override
@@ -143,7 +137,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         //Get element from your dataset at this position
-        //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
         if(itemType==NEWLIST_TYPE){
             ArrayList<String> keySet=new ArrayList<>(model.getItems().keySet());
@@ -169,24 +162,20 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    //Used to det the variable contextMenuList when a list has been longpressed
     private void setContextMenuList(Button button){
         this.contextMenuList=button;
     }
 
+    //Functions used to get the Button which has been longpressed
     public Button getContextMenuList(){
         return this.contextMenuList;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-
     @Override
     public int getItemCount() {
         return model.getKeySet().size();
-
-        /*if(!isAddNewPresent)
-            return model.getItems().keySet().size();
-        else
-            return model.getItems().keySet().size()+1;*/
     }
 
 
@@ -198,12 +187,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return isAddNewPresent;
     }
 
-    public void deleteEmptyMessage(RecyclerView.LayoutManager layoutManager){
-        if(model.getItems().keySet().size()==0){
-            layoutManager.removeAllViews();
-        }
-    }
-
+    //The listener for the lists' buttons
     public class AddNewClickListener implements View.OnClickListener{
         public void onClick(View view){
             LinearLayout container=(LinearLayout)view.getParent();
@@ -241,6 +225,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    //Used to remove the field that adds a new list
     public void removeAddNew(){
         if(isAddNewPresent){
             model.removeList("ADDNEW");
@@ -249,6 +234,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    //Function used to edit the text of the field used for the new lists
     public void setEditingText(String text){
         if(isAddNewPresent){
             EditText editText=(EditText) myLayoutManager.getChildAt(getItemCount()-1);

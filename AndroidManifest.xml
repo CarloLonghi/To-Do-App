@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.carlolonghi.todo">
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/todo_icon2"
@@ -21,14 +22,10 @@
         </activity>
         <activity
             android:name=".ItemsActivity"
-            android:parentActivityName=".MenuActivity"
-            android:theme="@style/ToDoAppTheme">
-        </activity>
-        <activity
-            android:name=".MenuActivity"
-            android:configChanges="orientation|keyboardHidden"
+            android:parentActivityName=".ScreenSlidePagerActivity"
             android:theme="@style/ToDoAppTheme">
         </activity>
     </application>
 
 </manifest>
+

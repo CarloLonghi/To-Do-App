@@ -3,6 +3,7 @@ package com.carlolonghi.todo;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+//This class regulates the behaviour of the items when are moved or swiped
 public class MyItemTouchHelper extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter myAdapter;

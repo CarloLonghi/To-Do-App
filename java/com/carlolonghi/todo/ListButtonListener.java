@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
+//This is the listener for the lists' buttons
 public class ListButtonListener implements View.OnClickListener {
     public void onClick(View view){
         avoidDoubleClicks(view);

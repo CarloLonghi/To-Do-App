@@ -1,32 +1,24 @@
 package com.carlolonghi.todo;
 
-import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.ViewModel;
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.widget.LinearLayout;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MyViewModel extends AndroidViewModel {
+public class ItemsViewModel extends AndroidViewModel {
 
     private LinkedHashMap<String,Items> items;
     private Items todaysItems;
 
-    public MyViewModel(Application application){
+    public ItemsViewModel(Application application){
         super(application);
 
         loadItems();
@@ -78,48 +70,6 @@ public class MyViewModel extends AndroidViewModel {
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public void updateListsOnFile(Context context){
-        todaysItems=new Items();
-        try{
-            FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
-            ObjectInputStream reader = new ObjectInputStream(inputStream);
-            LinkedHashMap<String,Items> temp=items;
-            items=(LinkedHashMap<String,Items>)reader.readObject();
-            inputStream.close();
-            reader.close();
-
-            inputStream = getApplication().getApplicationContext().openFileInput("today.dat");
-            reader = new ObjectInputStream(inputStream);
-            todaysItems=(Items) reader.readObject();
-            inputStream.close();
-            reader.close();
-
-            updateLists(temp);
-
-            FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
-            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(items);
-            outputStream.close();
-            writer.close();
-            outputStream = context.openFileOutput("today.dat", MODE_PRIVATE);
-            writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(todaysItems);
-            outputStream.close();
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void updateLists(LinkedHashMap<String,Items> correct){
-        if(!correct.keySet().equals(items.keySet())){
-            for(String list : correct.keySet()){
-                if(!items.keySet().contains(list))
-                    items.put(list,new Items());
-            }
         }
     }
 

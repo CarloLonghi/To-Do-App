@@ -1,25 +1,19 @@
 package com.carlolonghi.todo;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.widget.Button;
+import android.support.v7.app.AppCompatActivity;
 
-import com.carlolonghi.todo.MenuActivity;
-import com.carlolonghi.todo.R;
-
-public class ScreenSlidePagerActivity extends FragmentActivity {
+public class ScreenSlidePagerActivity extends AppCompatActivity {
 
     private static final int NUM_PAGES = 2;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
-
-    private MyViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,24 +25,16 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-        //Gets the ViewModel that reads and holds the application data and read the Map of items
-        this.model = ViewModelProviders.of(this).get(MyViewModel.class);
+        TabLayout tabLayout=(TabLayout)findViewById(R.id.tablayout);
+        tabLayout.setupWithViewPager(mPager);
     }
 
     @Override
     public void onBackPressed() {
-        if (mPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
+        if(mPager.getCurrentItem()==0)
             super.onBackPressed();
-        } else {
-            // Otherwise, select the previous step.
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-        }
-    }
-
-    public void enableAddButton(){
-        ((Button)findViewById(R.id.newListButton)).setClickable(true);
+        else
+            mPager.setCurrentItem(0);
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -67,6 +53,14 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position){
+            if(position==0)
+                return "Today";
+            else
+                return "Lists";
         }
     }
 

@@ -3,12 +3,10 @@ package com.carlolonghi.todo;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -21,8 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MyItemTouchHelper.ItemTouchHelperAdapter {
 
@@ -33,7 +29,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Items items;
     private String listTitle;
     private String editingText;
-    private MyViewModel model;
+    private ItemsViewModel model;
 
     // Provide a reference to the views for each data item
     public static class ItemsViewHolder extends RecyclerView.ViewHolder {
@@ -52,7 +48,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public ItemsAdapter(String listTitle, MyViewModel model) {
+    public ItemsAdapter(String listTitle, ItemsViewModel model) {
         this.model=model;
         this.listTitle=listTitle;
         this.editingText="";
@@ -60,8 +56,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.items=model.getItems().get(listTitle);
     }
 
-    //The adapter's constructo in case we are viewing the todaysItems list
-    public ItemsAdapter(MyViewModel model){
+    //The adapter's constructor in case we are viewing the todaysItems list
+    public ItemsAdapter(ItemsViewModel model){
         this.model=model;
         this.editingText="";
 

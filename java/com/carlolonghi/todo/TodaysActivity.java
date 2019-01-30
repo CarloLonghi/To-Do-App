@@ -1,16 +1,12 @@
 package com.carlolonghi.todo;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -21,7 +17,7 @@ public class TodaysActivity extends Fragment {
 
     private String listTitle;
     private Map<String,Items> items;
-    private MyViewModel model;
+    private ItemsViewModel model;
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
@@ -44,7 +40,7 @@ public class TodaysActivity extends Fragment {
         myRecyclerView.setLayoutManager(myLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
-        this.model = ViewModelProviders.of(this).get(MyViewModel.class);
+        this.model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
         // specify an adapter
         myAdapter = new ItemsAdapter(model);
