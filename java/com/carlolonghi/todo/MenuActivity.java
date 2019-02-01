@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,6 +95,7 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
             ((ListsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
     }
 
+    //The listener for the button used to get the dialog to add a new list
     public void onClick(final View addButton) {
         disableAddButton();
         myRecyclerView.setVisibility(View.VISIBLE);
@@ -125,7 +127,7 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
             checkIfListIsEmpty();
         }
         else if(item.getTitle().equals("Bookmark")){
-            //LA LISTA EVIDENZIATA DEVE AVERE UN COLORE DIVERSO, STILE DIVERSO ECC.
+            
         }
         return true;
     }

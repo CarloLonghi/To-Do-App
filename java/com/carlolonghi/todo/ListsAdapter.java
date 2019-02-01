@@ -162,7 +162,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    //Used to det the variable contextMenuList when a list has been longpressed
+    //Used to set the variable contextMenuList when a list has been longpressed
     private void setContextMenuList(Button button){
         this.contextMenuList=button;
     }

@@ -56,14 +56,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.items=model.getItems().get(listTitle);
     }
 
-/*    //The adapter's constructor in case we are viewing the todaysItems list
-    public ItemsAdapter(ItemsViewModel model){
-        this.model=model;
-        this.editingText="";
-
-        this.items=model.getTodaysItems();
-    }*/
-
     public Items getItems(){
         return items;
     }

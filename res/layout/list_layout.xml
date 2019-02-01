@@ -5,5 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@drawable/list_button"
-    android:textSize="18sp">
+    android:singleLine="true"
+    android:textSize="18sp"
+    android:textAlignment="viewStart"
+    android:paddingLeft="@dimen/text_margin">
+
 </Button>
