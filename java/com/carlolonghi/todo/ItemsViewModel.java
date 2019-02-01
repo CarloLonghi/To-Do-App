@@ -16,7 +16,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class ItemsViewModel extends AndroidViewModel {
 
     private LinkedHashMap<String,Items> items;
-    private Items todaysItems;
+    private TodayItems todaysItems;
 
     public ItemsViewModel(Application application){
         super(application);
@@ -34,7 +34,7 @@ public class ItemsViewModel extends AndroidViewModel {
 
     public void loadItems(){
         items=new LinkedHashMap<>();
-        todaysItems=new Items();
+        todaysItems=new TodayItems();
         try{
             FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
@@ -44,14 +44,14 @@ public class ItemsViewModel extends AndroidViewModel {
 
             inputStream = getApplication().getApplicationContext().openFileInput("today.dat");
             reader = new ObjectInputStream(inputStream);
-            todaysItems=(Items) reader.readObject();
+            todaysItems=(TodayItems) reader.readObject();
             inputStream.close();
             reader.close();
         } catch (Exception e){
             e.printStackTrace();
         }
         if(todaysItems==null)
-            todaysItems=new Items();
+            todaysItems=new TodayItems();
     }
 
     public void addList(String listTitle){
@@ -61,7 +61,7 @@ public class ItemsViewModel extends AndroidViewModel {
     public void removeList(String listTitle) {items.remove(listTitle);}
 
     public void updateItemsOnFile(Context context){
-        todaysItems=new Items();
+        todaysItems=new TodayItems();
         try{
             FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
@@ -91,11 +91,11 @@ public class ItemsViewModel extends AndroidViewModel {
     }
 
     public void loadTodaysItems(){
-        todaysItems=new Items();
+        todaysItems=new TodayItems();
         try{
             FileInputStream inputStream = getApplication().getApplicationContext().openFileInput("items.dat");
             ObjectInputStream reader = new ObjectInputStream(inputStream);
-            todaysItems = (Items) reader.readObject();
+            todaysItems = (TodayItems) reader.readObject();
             inputStream.close();
             reader.close();
         } catch (Exception e){
@@ -103,7 +103,7 @@ public class ItemsViewModel extends AndroidViewModel {
         }
     }
 
-    public Items getTodaysItems(){
+    public TodayItems getTodaysItems(){
         return todaysItems;
     }
 
@@ -113,7 +113,7 @@ public class ItemsViewModel extends AndroidViewModel {
     }
 
     //A funtion to update the modelView version of of todaysItems
-    public void updateTodaysItems(Items items){
+    public void updateTodaysItems(TodayItems items){
         this.todaysItems=items;
     }
 }

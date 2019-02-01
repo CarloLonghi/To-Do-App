@@ -43,12 +43,16 @@ public class TodaysActivity extends Fragment {
         this.model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
         // specify an adapter
-        myAdapter = new ItemsAdapter(model);
+        myAdapter = new TodayItemsAdapter(model);
         myRecyclerView.setAdapter(myAdapter);
 
         ItemTouchHelper.Callback callback = new MyItemTouchHelper((MyItemTouchHelper.ItemTouchHelperAdapter)myAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(myRecyclerView);
+
+        //Update the chekced and unchecked today items
+        ((TodayItemsAdapter)myAdapter).getItems().updateCheckedItems();
+        ((TodayItemsAdapter)myAdapter).getItems().updateNonCheckedItems();
 
         return rootView;
     }
@@ -73,7 +77,7 @@ public class TodaysActivity extends Fragment {
 
         if(savedInstanceState!=null){
             // Restore views' state from saved instance
-            ((ItemsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
+            ((TodayItemsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
         }
     }
 
@@ -81,7 +85,7 @@ public class TodaysActivity extends Fragment {
     public void onPause(){
 
         //Save the items state on file using the ViewModel whenever the activity is paused
-        model.updateTodaysItems(((ItemsAdapter)myAdapter).getItems());
+        model.updateTodaysItems(((TodayItemsAdapter)myAdapter).getItems());
         model.updateTodaysItemsOnFile(this.getActivity().getBaseContext());
 
         super.onPause();

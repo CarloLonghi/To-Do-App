@@ -18,16 +18,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Collections;
 
-public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MyItemTouchHelper.ItemTouchHelperAdapter {
+public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements MyItemTouchHelper.ItemTouchHelperAdapter {
 
     public static final int CHECKEDITEM_TYPE=2;
     public static final int NEWITEM_TYPE=1;
     public static final int ADDNEW_TYPE=0;
 
-    private Items items;
-    private String listTitle;
+    private TodayItems items;
     private String editingText;
     private ItemsViewModel model;
 
@@ -48,23 +48,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public ItemsAdapter(String listTitle, ItemsViewModel model) {
-        this.model=model;
-        this.listTitle=listTitle;
-        this.editingText="";
-
-        this.items=model.getItems().get(listTitle);
-    }
-
-/*    //The adapter's constructor in case we are viewing the todaysItems list
-    public ItemsAdapter(ItemsViewModel model){
+    //The adapter's constructor in case we are viewing the todaysItems list
+    public TodayItemsAdapter(ItemsViewModel model){
         this.model=model;
         this.editingText="";
 
         this.items=model.getTodaysItems();
-    }*/
+    }
 
-    public Items getItems(){
+    public TodayItems getItems(){
         return items;
     }
 
@@ -86,9 +78,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch(viewType) {
             case ADDNEW_TYPE:
                 final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_reverse_layout,parent,false);
-                AddNewItemViewHolder vh2=new AddNewItemViewHolder(addNew);
+                ItemsAdapter.AddNewItemViewHolder vh2=new ItemsAdapter.AddNewItemViewHolder(addNew);
                 Button addNewButton=(Button)addNew.findViewById(R.id.addNewButton);
-                addNewButton.setOnClickListener(new AddNewClickListener());
+                addNewButton.setOnClickListener(new TodayItemsAdapter.AddNewClickListener());
 
                 //This block of instructions regulates the correct behaviour of the EditText used to add the new items
                 //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
@@ -103,7 +95,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
                                 //Calls the onClick of the Add button if the newLine is pressed
-                                (new AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
+                                (new TodayItemsAdapter.AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
                                 return true;
                             default:
                                 return false;
@@ -115,7 +107,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case NEWITEM_TYPE:
             default:
                 newItem = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
-                ItemsViewHolder vh1 = new ItemsViewHolder(newItem);
+                ItemsAdapter.ItemsViewHolder vh1 = new ItemsAdapter.ItemsViewHolder(newItem);
                 return vh1;
         }
     }
@@ -127,13 +119,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
         if(itemType==ADDNEW_TYPE){
-            EditText editText=((EditText)((AddNewItemViewHolder)holder).newItemLayout.getChildAt(0));
+            EditText editText=((EditText)((ItemsAdapter.AddNewItemViewHolder)holder).newItemLayout.getChildAt(0));
             editText.setText(editingText);
             editText.setSelection(editingText.length());
         }
         else if(itemType==NEWITEM_TYPE){
-            String text=items.getNonCheckedItems().get(position);
-            CheckBox checkBox=((CheckBox)((ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
+            final ItemWithDate item=items.getNonCheckedItems().get(position);
+            String text=item.getName();
+            CheckBox checkBox=((CheckBox)((ItemsAdapter.ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
             checkBox.setText(text);
             checkBox.setChecked(false);
             checkBox.setEnabled(true);
@@ -142,19 +135,20 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void onClick(View v) {
                     v.setEnabled(false);
                     String text=((CheckBox)v).getText().toString();
-                    int position=items.getNonCheckedItems().indexOf(text);
-                    items.getNonCheckedItems().remove(text);
+                    int position=items.getNonCheckedItems().indexOf(item);
+                    items.getNonCheckedItems().remove(item);
                     RecyclerView.Adapter adapter=((RecyclerView)((LinearLayout)v.getParent()).getParent()).getAdapter();
                     adapter.notifyItemRemoved(position);
-                    items.addCheckedItem(text);
+                    items.addCheckedItem(new ItemWithDate(text,item.getDay(),item.getYear()));
                     adapter.notifyItemInserted(getItemCount()-1);
                 }
             });
         }
         else if(itemType==CHECKEDITEM_TYPE){
             int posOfNewItem=position-items.getNonCheckedItems().size()-1;
-            CheckBox checkBox=((CheckBox)((ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
-            checkBox.setText(items.getCheckedItems().get(posOfNewItem));
+            final ItemWithDate item=items.getCheckedItems().get(posOfNewItem);
+            CheckBox checkBox=((CheckBox)((ItemsAdapter.ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
+            checkBox.setText(items.getCheckedItems().get(posOfNewItem).getName());
             checkBox.setChecked(true);
             checkBox.setEnabled(true);
             checkBox.setOnClickListener(new View.OnClickListener() {
@@ -162,11 +156,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void onClick(View v) {
                     ((CheckBox)v).setEnabled(false);
                     String text=((CheckBox)v).getText().toString();
-                    int position=items.getCheckedItems().indexOf(text)+items.getNonCheckedItems().size()+1;
-                    items.getCheckedItems().remove(text);
+                    int position=items.getCheckedItems().indexOf(item)+items.getNonCheckedItems().size()+1;
+                    items.getCheckedItems().remove(item);
                     RecyclerView.Adapter adapter=((RecyclerView)((LinearLayout)v.getParent()).getParent()).getAdapter();
                     adapter.notifyItemRemoved(position);
-                    items.addNonCheckedItem(text);
+                    items.addNonCheckedItem(new ItemWithDate(text,item.getDay(),item.getYear()));
                     adapter.notifyItemInserted(items.getNonCheckedItems().size()-1);
                 }
             });
@@ -207,8 +201,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        Items tmp=items;
-        return tmp.getTotalSize()+1;
+        return items.getTotalSize()+1;
     }
 
     public void setEditingText(String editingText){
@@ -238,7 +231,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 toast.show();
             }
             else {
-                items.addNonCheckedItem(editText.getText().toString());
+                Calendar calendar=Calendar.getInstance();
+                items.addNonCheckedItem(new ItemWithDate(editText.getText().toString(),calendar.get(Calendar.DAY_OF_YEAR),calendar.get(Calendar.YEAR)));
                 ((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(items.getNonCheckedItems().size());
                 editText.setText("");
                 editingText="";
@@ -250,3 +244,4 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 }
+
