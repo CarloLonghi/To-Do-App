@@ -5,13 +5,15 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="ToDoAppTheme" parent="AppTheme" >
+    <style name="ToDoAppTheme" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorAccent">@color/colorPrimaryDark</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
+
+
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/colorPrimaryDark</item>
