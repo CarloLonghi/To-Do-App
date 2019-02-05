@@ -45,7 +45,13 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
             menu.add(0, v.getId(), 0, "Delete");
-            menu.add(0, v.getId(), 0, "Bookmark");
+            if(((RecyclerView)v.getParent()).getId() == R.id.bookmarklistsView){
+                menu.add(0, v.getId(), 0, "Remove Bookmark");
+
+            }
+            else {
+                menu.add(0, v.getId(), 0, "Bookmark");
+            }
         }
     }
 

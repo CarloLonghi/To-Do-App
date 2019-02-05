@@ -9,4 +9,5 @@
     <string name="newItemHint">Type the name of the new item</string>
     <string name="emptyRecyclerView">There is no list here. Add a new one.</string>
     <string name="voidMenuActivity">There is no list here\nTry to add a new one!</string>
+    <string name="others">Others</string>
 </resources>

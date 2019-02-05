@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,16 +13,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.LinkedHashMap;
-
 
 public class MenuActivity extends Fragment implements View.OnClickListener {
 
-    private LinkedHashMap<String,Items> items;
     private ItemsViewModel model;
-    private RecyclerView myRecyclerView;
-    private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLayoutManager;
+    private RecyclerView listsRecyclerView;
+    private RecyclerView bmListsRecyclerView;
+    private RecyclerView.Adapter listsAdapter;
+    private RecyclerView.Adapter bmListsAdapter;
+    private RecyclerView.LayoutManager listsLayoutManager;
+    private RecyclerView.LayoutManager bmListsLayoutManager;
     private ViewGroup rootView;
 
     //The spacing between lists in the recyclerview
@@ -34,24 +33,32 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         rootView=(ViewGroup) inflater.inflate(R.layout.fragment_menu,container,false);
 
-        myRecyclerView=(RecyclerView) rootView.findViewById(R.id.listsView);
-        registerForContextMenu(myRecyclerView);
+        listsRecyclerView=(RecyclerView) rootView.findViewById(R.id.listsView);
+        registerForContextMenu(listsRecyclerView);
+
+        bmListsRecyclerView =(RecyclerView)rootView.findViewById(R.id.bookmarklistsView);
+        registerForContextMenu(bmListsRecyclerView);
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
-        myRecyclerView.setHasFixedSize(true);
+        listsRecyclerView.setHasFixedSize(true);
+        bmListsRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        myLayoutManager = new LinearLayoutManager(this.getContext());
-        myRecyclerView.setLayoutManager(myLayoutManager);
+        listsLayoutManager = new LinearLayoutManager(this.getContext());
+        listsRecyclerView.setLayoutManager(listsLayoutManager);
+        bmListsLayoutManager=new LinearLayoutManager(this.getContext());
+        bmListsRecyclerView.setLayoutManager(bmListsLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
         model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
-        checkIfListIsEmpty();
+        checkIfItemsAreEmpty();
 
         // specify an adapter (see also next example)
-        myAdapter = new ListsAdapter(model,myLayoutManager);
-        myRecyclerView.setAdapter(myAdapter);
+        listsAdapter = new ListsAdapter(model, listsLayoutManager);
+        listsRecyclerView.setAdapter(listsAdapter);
+        bmListsAdapter=new BMListsAdapter(model,bmListsLayoutManager);
+        bmListsRecyclerView.setAdapter(bmListsAdapter);
 
         // sets a vertical space between the recyclerview items
         class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
@@ -67,7 +74,8 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
                 outRect.bottom = verticalSpaceHeight;
             }
         }
-        myRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
+        listsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
+        bmListsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
 
         //Sets the listener for the button used to add a new list
         Button addNewButton=(Button)rootView.findViewById(R.id.newListButton);
@@ -92,19 +100,19 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState!=null)
-            ((ListsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
+            ((ListsAdapter)listsAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
     }
 
     //The listener for the button used to get the dialog to add a new list
     public void onClick(final View addButton) {
         disableAddButton();
-        myRecyclerView.setVisibility(View.VISIBLE);
+        listsRecyclerView.setVisibility(View.VISIBLE);
         ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
         //Add the edittext where the user has to type the title of the new list
-        ((ListsAdapter)myAdapter).setAddNewPresent(true);
+        ((ListsAdapter)listsAdapter).setAddNewPresent(true);
         model.addList("addnew");
-        myAdapter.notifyDataSetChanged();
-        myRecyclerView.scrollToPosition(model.getKeySet().size()-1);
+        listsAdapter.notifyDataSetChanged();
+        listsRecyclerView.scrollToPosition(model.getKeySet().size()-1);
     }
 
     public void enableAddButton(){
@@ -120,27 +128,54 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
     //Manages the context menu choices
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Button contextMenuList=((ListsAdapter)myAdapter).getContextMenuList();
+        Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
+        Button bmContextMenuList=((BMListsAdapter)bmListsAdapter).getContextMenuList();
         if(item.getTitle().equals("Delete")){
             model.removeList(contextMenuList.getText().toString().toUpperCase());
-            myAdapter.notifyDataSetChanged();
-            checkIfListIsEmpty();
+            listsAdapter.notifyDataSetChanged();
+            checkIfItemsAreEmpty();
         }
         else if(item.getTitle().equals("Bookmark")){
-            
+            model.bookmarkList(contextMenuList.getText().toString().toUpperCase());
+            listsAdapter.notifyDataSetChanged();
+            bmListsAdapter.notifyDataSetChanged();
+            checkIfItemsAreEmpty();
         }
+        else if(item.getTitle().equals("Remove Bookmark")){
+            model.unbookmarkList(bmContextMenuList.getText().toString().toUpperCase());
+            listsAdapter.notifyDataSetChanged();
+            bmListsAdapter.notifyDataSetChanged();
+            checkIfItemsAreEmpty();
+        }
+
         return true;
     }
 
-    //If the list is empty it shows the emptylist message
-    private void checkIfListIsEmpty(){
-        if(model.isEmpty()){
-            myRecyclerView.setVisibility(View.GONE);
+    //Regulates the presence of the "Others" title and of the empty Activity string
+    private void checkIfItemsAreEmpty(){
+        if(model.itemsIsEmpty() && model.bmItemsIsEmpty()){
+            listsRecyclerView.setVisibility(View.GONE);
+            bmListsRecyclerView.setVisibility(View.GONE);
             ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.VISIBLE);
+            ((TextView)rootView.findViewById(R.id.bookmarkTextView)).setVisibility(View.GONE);
         }
-        else{
+        if(!model.itemsIsEmpty() && model.bmItemsIsEmpty()){
+            listsRecyclerView.setVisibility(View.VISIBLE);
+            bmListsRecyclerView.setVisibility(View.GONE);
             ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
-            myRecyclerView.setVisibility(View.VISIBLE);
+            ((TextView)rootView.findViewById(R.id.bookmarkTextView)).setVisibility(View.GONE);
+        }
+        if(model.itemsIsEmpty() && !model.bmItemsIsEmpty()){
+            listsRecyclerView.setVisibility(View.GONE);
+            bmListsRecyclerView.setVisibility(View.VISIBLE);
+            ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
+            ((TextView)rootView.findViewById(R.id.bookmarkTextView)).setVisibility(View.VISIBLE);
+        }
+        if(!model.itemsIsEmpty() && !model.bmItemsIsEmpty()){
+            listsRecyclerView.setVisibility(View.VISIBLE);
+            bmListsRecyclerView.setVisibility(View.VISIBLE);
+            ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
+            ((TextView)rootView.findViewById(R.id.bookmarkTextView)).setVisibility(View.VISIBLE);
         }
     }
 
@@ -149,11 +184,12 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         super.onPause();
 
         //Removes the addNew field used to add a new list
-        ((ListsAdapter)myAdapter).removeAddNew();
-        ((ListsAdapter)myAdapter).setAddNewPresent(false);
+        ((ListsAdapter)listsAdapter).removeAddNew();
+        ((ListsAdapter)listsAdapter).setAddNewPresent(false);
         enableAddButton();
 
         //Save the items state on file using the ViewModel whenever the activity is paused
         model.updateItemsOnFile(this.getActivity().getBaseContext());
+        model.updateBookmarkItemsOnFile(this.getActivity().getBaseContext());
     }
 }
