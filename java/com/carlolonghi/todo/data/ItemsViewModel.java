@@ -1,4 +1,4 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.data;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

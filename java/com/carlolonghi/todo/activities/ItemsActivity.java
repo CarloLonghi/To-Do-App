@@ -1,27 +1,25 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.activities;
 
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
-import java.util.Map;
+import com.carlolonghi.todo.adapters.ItemsAdapter;
+import com.carlolonghi.todo.others.MyItemTouchHelper;
+import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.R;
 
 
-
-public class ItemsActivity extends FragmentActivity {
+public class ItemsActivity extends AppCompatActivity {
 
     private String listTitle;
-    private Map<String,Items> items;
     private ItemsViewModel model;
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
@@ -31,7 +29,7 @@ public class ItemsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
-        myRecyclerView=(RecyclerView) findViewById(R.id.myRecyclerView);
+        myRecyclerView= findViewById(R.id.myRecyclerView);
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         myRecyclerView.setHasFixedSize(true);
@@ -59,10 +57,11 @@ public class ItemsActivity extends FragmentActivity {
         touchHelper.attachToRecyclerView(myRecyclerView);
 
         //Set the toolbar visible and sets its text as the title of the list
-        android.support.v7.widget.Toolbar toolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
-        toolbar.setVisibility(View.VISIBLE);
-        ((TextView)toolbar.getChildAt(0)).setText(this.listTitle);
+        getSupportActionBar().setTitle(this.listTitle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(getDrawable(R.drawable.actionbar_background));
     }
+
 
     //The function that regulates the behaviour of the back button that is on top-left of the screen
     public boolean onOptionsItemSelected(MenuItem item){

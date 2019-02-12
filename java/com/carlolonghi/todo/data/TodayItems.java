@@ -1,14 +1,13 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class TodayItems implements Serializable {
-    private List<ItemWithDate> nonCheckedItems;
-    private List<ItemWithDate> checkedItems;
+    private final List<ItemWithDate> nonCheckedItems;
+    private final List<ItemWithDate> checkedItems;
 
     public TodayItems(){
         checkedItems=new ArrayList<>();
@@ -45,9 +44,11 @@ public class TodayItems implements Serializable {
     }
 
     public void updateCheckedItems(){
-        for(ItemWithDate item : checkedItems){
+        Iterator<ItemWithDate> iterator=checkedItems.iterator();
+        while(iterator.hasNext()){
+            ItemWithDate item=iterator.next();
             if(item.isOutdated())
-                checkedItems.remove(item);
+                iterator.remove();
         }
     }
 
@@ -56,5 +57,13 @@ public class TodayItems implements Serializable {
             if(item.isOutdated())
                 item.updateDay();
         }
+    }
+
+    public boolean contains(String string){
+        for(ItemWithDate item : nonCheckedItems){
+            if(item.getName().equals(string))
+                return true;
+        }
+        return false;
     }
 }

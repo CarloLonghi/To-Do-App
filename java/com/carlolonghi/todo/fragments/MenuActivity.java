@@ -1,8 +1,9 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.carlolonghi.todo.adapters.ListsAdapter;
+import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.adapters.BMListsAdapter;
+import com.carlolonghi.todo.R;
 
 
 public class MenuActivity extends Fragment implements View.OnClickListener {
@@ -29,7 +35,7 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
     private final int SPACE_BETWEEN_LISTS=40;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView=(ViewGroup) inflater.inflate(R.layout.fragment_menu,container,false);
 
@@ -64,13 +70,13 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
             private final int verticalSpaceHeight;
 
-            public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
+            private VerticalSpaceItemDecoration(int verticalSpaceHeight) {
                 this.verticalSpaceHeight = verticalSpaceHeight;
             }
 
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                       RecyclerView.State state) {
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                       @NonNull RecyclerView.State state) {
                 outRect.bottom = verticalSpaceHeight;
             }
         }
@@ -115,12 +121,12 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         listsRecyclerView.scrollToPosition(model.getKeySet().size()-1);
     }
 
-    public void enableAddButton(){
+    private void enableAddButton(){
         Button addButton=(Button)rootView.findViewById(R.id.newListButton);
         addButton.setClickable(true);
     }
 
-    public void disableAddButton(){
+    private void disableAddButton(){
         Button addButton=(Button)rootView.findViewById(R.id.newListButton);
         addButton.setClickable(false);
     }

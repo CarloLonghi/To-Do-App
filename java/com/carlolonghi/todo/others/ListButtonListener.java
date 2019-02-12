@@ -1,8 +1,10 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.others;
 
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+
+import com.carlolonghi.todo.activities.ItemsActivity;
 
 //This is the listener for the lists' buttons
 public class ListButtonListener implements View.OnClickListener {
@@ -15,7 +17,7 @@ public class ListButtonListener implements View.OnClickListener {
     }
 
     //To prevent from double clicking the row item and so prevents overlapping fragment.
-    public static void avoidDoubleClicks(final View view) {
+    private static void avoidDoubleClicks(final View view) {
         final long DELAY_IN_MS = 900;
         if (!view.isClickable()) {
             return;

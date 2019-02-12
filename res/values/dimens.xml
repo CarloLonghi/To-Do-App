@@ -1,3 +1,4 @@
 <resources>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="list_right_padding">48dp</dimen>
 </resources>

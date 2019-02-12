@@ -4,10 +4,10 @@
     android:id="@+id/bmListButton"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@drawable/list_button_bookmark"
+    android:background="@drawable/list_button_bookmark_selector"
+    android:paddingLeft="@dimen/text_margin"
+    android:paddingRight="@dimen/list_right_padding"
     android:singleLine="true"
-    android:textSize="18sp"
     android:textAlignment="viewStart"
-    android:paddingLeft="@dimen/text_margin">
-
+    android:textSize="18sp">
 </Button>

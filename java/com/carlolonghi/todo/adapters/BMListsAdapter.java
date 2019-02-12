@@ -1,5 +1,6 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -7,20 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.others.ListButtonListener;
+import com.carlolonghi.todo.R;
+
 import java.util.ArrayList;
 
 public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ItemsViewModel model;
+    private final ItemsViewModel model;
     private Button contextMenuList;
-    private RecyclerView.LayoutManager myLayoutManager;
+    private final RecyclerView.LayoutManager myLayoutManager;
 
     private static final int NEWLIST_TYPE = 1;
 
-    public static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        public Button myListButton;
+    private static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        private final Button myListButton;
 
-        public ListViewHolder(Button listButton) {
+        private ListViewHolder(Button listButton) {
             super(listButton);
             myListButton = listButton;
             myListButton.setOnCreateContextMenuListener(this);
@@ -49,22 +54,21 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return NEWLIST_TYPE;
     }
 
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override @NonNull
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
         Button newList = (Button) LayoutInflater.from(parent.getContext()).inflate(R.layout.bm_list_layout, parent, false);
-        ListsAdapter.ListViewHolder vh = new ListsAdapter.ListViewHolder(newList);
+        BMListsAdapter.ListViewHolder vh = new BMListsAdapter.ListViewHolder(newList);
         newList.setOnClickListener(new ListButtonListener());
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull  final RecyclerView.ViewHolder holder, int position) {
         //Get element from your dataset at this position
-        int itemType = getItemViewType(position);
         ArrayList<String> keySet = new ArrayList<>(model.getBookmarkItems().keySet());
         String text = keySet.get(position);
-        Button listButton = ((ListsAdapter.ListViewHolder) holder).myListButton;
+        Button listButton = ((BMListsAdapter.ListViewHolder) holder).myListButton;
         listButton.setText(text);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

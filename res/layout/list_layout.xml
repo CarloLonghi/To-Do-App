@@ -8,6 +8,8 @@
     android:singleLine="true"
     android:textSize="18sp"
     android:textAlignment="viewStart"
-    android:paddingLeft="@dimen/text_margin">
+    android:paddingStart="@dimen/text_margin"
+    android:paddingEnd="48dp"
+    style="?android:attr/borderlessButtonStyle">
 
 </Button>

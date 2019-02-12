@@ -1,8 +1,9 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.adapters;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.ContextMenu;
@@ -19,23 +20,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.carlolonghi.todo.activities.ItemsActivity;
+import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.others.ListButtonListener;
+import com.carlolonghi.todo.R;
+
 import java.util.ArrayList;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private boolean isAddNewPresent;
     private String editingText;
-    private ItemsViewModel model;
+    private final ItemsViewModel model;
     private Button contextMenuList;
-    private RecyclerView.LayoutManager myLayoutManager;
+    private final RecyclerView.LayoutManager myLayoutManager;
 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
     private static final int VOID_LIST=3;
 
     public static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        public Button myListButton;
-        public ListViewHolder(Button listButton) {
+        public final Button myListButton;
+        private ListViewHolder(Button listButton) {
             super(listButton);
             myListButton = listButton;
             myListButton.setOnCreateContextMenuListener(this);
@@ -56,24 +62,24 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    public static class AddNewListHolder extends RecyclerView.ViewHolder{
-        public LinearLayout addNewLayout;
-        public AddNewListHolder(LinearLayout addLayout){
+    private static class AddNewListHolder extends RecyclerView.ViewHolder{
+        private final LinearLayout addNewLayout;
+        private AddNewListHolder(LinearLayout addLayout){
             super(addLayout);
             addNewLayout=addLayout;
         }
     }
 
-    public static class VoidListHolder extends RecyclerView.ViewHolder{
-        public TextView textView;
-        public VoidListHolder(TextView textView){
+    private static class VoidListHolder extends RecyclerView.ViewHolder{
+        private final TextView textView;
+        private VoidListHolder(TextView textView){
             super(textView);
             this.textView=textView;
         }
     }
 
     public ListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager){
-        this.model=model;https://stackoverflow.com/questions/6750069/get-the-current-fragment-object
+        this.model=model;
         this.myLayoutManager=layoutManager;
         this.isAddNewPresent=false;
         this.editingText="";
@@ -87,8 +93,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         else return NEWLIST_TYPE;
     }
 
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    @Override @NonNull
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         switch(viewType){
             case NEWLIST_TYPE:
                 Button newList=(Button) LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout,parent,false);
@@ -141,7 +147,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         //Get element from your dataset at this position
         int itemType=getItemViewType(position);
         if(itemType==NEWLIST_TYPE){
@@ -189,12 +195,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.isAddNewPresent=isPresent;
     }
 
-    public boolean isAddNewPresent(){
-        return isAddNewPresent;
-    }
-
     //The listener for the lists' buttons
-    public class AddNewClickListener implements View.OnClickListener{
+    private class AddNewClickListener implements View.OnClickListener{
         public void onClick(View view){
             LinearLayout container=(LinearLayout)view.getParent();
             EditText editText=(EditText)container.getChildAt(1);

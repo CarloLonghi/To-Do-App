@@ -1,12 +1,12 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Items implements Serializable{
-    private List<String> nonCheckedItems;
-    private List<String> checkedItems;
+    private final List<String> nonCheckedItems;
+    private final List<String> checkedItems;
 
     public Items(){
         checkedItems=new ArrayList<>();

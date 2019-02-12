@@ -1,7 +1,8 @@
-package com.carlolonghi.todo;
+package com.carlolonghi.todo.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import java.util.Map;
+import com.carlolonghi.todo.adapters.TodayItemsAdapter;
+import com.carlolonghi.todo.others.MyItemTouchHelper;
+import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.R;
 
 public class TodaysActivity extends Fragment {
 
-    private String listTitle;
-    private Map<String,Items> items;
     private ItemsViewModel model;
     private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
@@ -25,7 +27,7 @@ public class TodaysActivity extends Fragment {
     private ViewGroup rootView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(
                 R.layout.activity_items, container, false);
@@ -50,7 +52,7 @@ public class TodaysActivity extends Fragment {
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(myRecyclerView);
 
-        //Update the chekced and unchecked today items
+        //Update the checked and unchecked today items
         ((TodayItemsAdapter)myAdapter).getItems().updateCheckedItems();
         ((TodayItemsAdapter)myAdapter).getItems().updateNonCheckedItems();
 
@@ -60,7 +62,7 @@ public class TodaysActivity extends Fragment {
 
     //This method saves an InstanceState when the activity is destroyed
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         // Save the user's current state
         EditText editText=(EditText)rootView.findViewById(R.id.addNewText);
         savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
