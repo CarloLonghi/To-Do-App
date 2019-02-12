@@ -59,7 +59,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.listTitle=listTitle;
         this.editingText="";
 
-        this.items=model.getBookmarkItems().get(listTitle);
+        if(model.isBookmark(listTitle))
+            this.items=model.getBookmarkItems().get(listTitle);
+        else
+            this.items=model.getItems().get(listTitle);
     }
 
     public Items getItems(){

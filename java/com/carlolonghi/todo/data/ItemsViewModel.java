@@ -156,4 +156,9 @@ public class ItemsViewModel extends AndroidViewModel {
     public void updateTodaysItems(TodayItems items){
         this.todaysItems=items;
     }
+
+    //Tells if the string is the title of a list with bookmark or not
+    public boolean isBookmark(String listTitle){
+        return bookmarkItems.containsKey(listTitle);
+    }
 }
