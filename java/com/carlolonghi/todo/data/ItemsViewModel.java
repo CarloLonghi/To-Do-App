@@ -74,6 +74,8 @@ public class ItemsViewModel extends AndroidViewModel {
 
     public void removeList(String listTitle) {items.remove(listTitle);}
 
+    public void removeBMList(String listTitle) {bookmarkItems.remove(listTitle);}
+
     public void bookmarkList(String listTitle){
         bookmarkItems.put(listTitle,items.get(listTitle));
         items.remove(listTitle);

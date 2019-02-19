@@ -17,7 +17,7 @@ import com.carlolonghi.todo.others.MyItemTouchHelper;
 import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.R;
 
-public class TodaysActivity extends Fragment {
+public class TodaysFragment extends Fragment {
 
     private ItemsViewModel model;
     private RecyclerView myRecyclerView;

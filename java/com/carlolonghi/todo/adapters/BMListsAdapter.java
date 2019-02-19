@@ -1,5 +1,6 @@
 package com.carlolonghi.todo.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -19,6 +20,7 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final ItemsViewModel model;
     private Button contextMenuList;
     private final RecyclerView.LayoutManager myLayoutManager;
+    private final Context context;
 
     private static final int NEWLIST_TYPE = 1;
 
@@ -35,18 +37,14 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(0, v.getId(), 0, "Delete");
-            if(((RecyclerView)v.getParent()).getId() == R.id.bookmarklistsView){
-                menu.add(0, v.getId(), 0, "Remove Bookmark");
-
-            }
-            else {
-                menu.add(0, v.getId(), 0, "Bookmark");
-            }        }
+            menu.add(0, v.getId(), 0, "Remove Bookmark");
+        }
     }
 
-    public BMListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager) {
+    public BMListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager,Context context) {
         this.model = model;
         this.myLayoutManager = layoutManager;
+        this.context=context;
     }
 
     @Override
@@ -83,6 +81,13 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     //Used to set the variable contextMenuList when a list has been longpressed
     private void setContextMenuList(Button button) {
         this.contextMenuList = button;
+    }
+
+    //Delete the button previously stored for the contextmenu
+    public void deleteContextMenuList(){
+        Button b=new Button(this.context);
+        b.setText("");
+        this.contextMenuList=b;
     }
 
     //Functions used to get the Button which has been longpressed

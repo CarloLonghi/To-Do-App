@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@drawable/list_button_bookmark_selector"
-    android:paddingLeft="@dimen/text_margin"
-    android:paddingRight="@dimen/list_right_padding"
+    android:paddingStart="@dimen/text_margin"
+    android:paddingEnd="@dimen/list_right_padding"
     android:singleLine="true"
     android:textAlignment="viewStart"
     android:textSize="18sp">

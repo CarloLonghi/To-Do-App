@@ -20,7 +20,7 @@ import com.carlolonghi.todo.adapters.BMListsAdapter;
 import com.carlolonghi.todo.R;
 
 
-public class MenuActivity extends Fragment implements View.OnClickListener {
+public class ListsFragment extends Fragment implements View.OnClickListener {
 
     private ItemsViewModel model;
     private RecyclerView listsRecyclerView;
@@ -61,9 +61,9 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         checkIfItemsAreEmpty();
 
         // specify an adapter (see also next example)
-        listsAdapter = new ListsAdapter(model, listsLayoutManager);
+        listsAdapter = new ListsAdapter(model, listsLayoutManager,this.getContext());
         listsRecyclerView.setAdapter(listsAdapter);
-        bmListsAdapter=new BMListsAdapter(model,bmListsLayoutManager);
+        bmListsAdapter=new BMListsAdapter(model,bmListsLayoutManager,this.getContext());
         bmListsRecyclerView.setAdapter(bmListsAdapter);
 
         // sets a vertical space between the recyclerview items
@@ -137,7 +137,10 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
         Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
         Button bmContextMenuList=((BMListsAdapter)bmListsAdapter).getContextMenuList();
         if(item.getTitle().equals("Delete")){
-            model.removeList(contextMenuList.getText().toString().toUpperCase());
+            if(contextMenuList==null || contextMenuList.getText().toString().equals(""))
+                model.removeBMList(bmContextMenuList.getText().toString().toUpperCase());
+            else
+                model.removeList(contextMenuList.getText().toString().toUpperCase());
             listsAdapter.notifyDataSetChanged();
             checkIfItemsAreEmpty();
         }
@@ -153,6 +156,8 @@ public class MenuActivity extends Fragment implements View.OnClickListener {
             bmListsAdapter.notifyDataSetChanged();
             checkIfItemsAreEmpty();
         }
+        ((ListsAdapter)listsAdapter).deleteContextMenuList();
+        ((BMListsAdapter)bmListsAdapter).deleteContextMenuList();
 
         return true;
     }

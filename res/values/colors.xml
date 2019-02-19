@@ -2,15 +2,8 @@
 <resources>
     <color name="colorPrimary">#edcb1d</color>
     <color name="colorPrimaryDark">#d3ae0e</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="white">#FFFFFF</color>
     <color name="shadewhite">#fff1b5</color>
-    <color name="yellowShade1">#a9fad327</color>
-    <color name="yellowDarker">#f7c52f</color>
-    <color name="bookmarkColor">#d42f05</color>
-    <color name="lime">#EEFF41</color>
-    <color name="colorSecondary">#fa4b1f</color>
-    <color name="colorSecondaryWhite">#05FA4B1F</color>
+    <color name="deleteAnimationColor">#ed5656</color>
 </resources>
 
 

@@ -5,7 +5,7 @@
     android:id="@+id/menuConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.MenuActivity">
+    tools:context=".fragments.ListsFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="bottom|right">
+            android:gravity="bottom|end">
 
             <Button
                 android:id="@+id/newListButton"
@@ -76,7 +76,7 @@
                 android:background="@drawable/round_button"
                 android:elevation="7dp"
                 android:onClick="onClick"
-                android:text="+"
+                android:text="@string/plusSymbol"
                 android:textAlignment="center"
                 android:textColor="@color/shadewhite"
                 android:textSize="45sp" />

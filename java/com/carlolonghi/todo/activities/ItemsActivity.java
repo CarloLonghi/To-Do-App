@@ -65,7 +65,7 @@ public class ItemsActivity extends AppCompatActivity {
 
     //The function that regulates the behaviour of the back button that is on top-left of the screen
     public boolean onOptionsItemSelected(MenuItem item){
-        //The button make the app go back to MenuActivity
+        //The button make the app go back to ListsFragment
         finish();
         return true;
     }

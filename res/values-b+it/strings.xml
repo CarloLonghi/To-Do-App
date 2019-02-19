@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDo</string>
+    <string name="add">Aggiungi</string>
+    <string name="newListHint">Nuova lista&#8230;</string>
+    <string name="voidMenuActivity">Non c\'è nessuna lista\nAggiungine una!</string>
+    <string name="others">Altre</string>
+    <string name="plusSymbol">+</string>
+    <string name="emptyListError">Non puoi aggiungere una lista vuota</string>
+    <string name="duplicateListError">Questa lista esiste già</string>
+    <string name="emptyItemError">Non puoi aggiungere un elemento vuoto</string>
+    <string name="duplicateItemError">Questo elemento esiste già</string>
+
+</resources>

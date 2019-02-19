@@ -220,9 +220,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onClick(View view){
             LinearLayout container=(LinearLayout)view.getParent();
             EditText editText=(EditText)container.getChildAt(0);
+            Context context = view.getContext().getApplicationContext();
             if(editText.getText().toString().equals("")){
-                Context context = view.getContext().getApplicationContext();
-                CharSequence text = "You can't add an empty item";
+                CharSequence text = context.getResources().getString(R.string.emptyItemError);
                 int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, text, duration);
@@ -230,8 +230,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 toast.show();
             }
             else if(items.getNonCheckedItems().contains(editText.getText().toString())){
-                Context context = view.getContext().getApplicationContext();
-                CharSequence text = "Item already exists";
+                CharSequence text = context.getResources().getString(R.string.duplicateItemError);
                 int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, text, duration);

@@ -34,10 +34,10 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final ItemsViewModel model;
     private Button contextMenuList;
     private final RecyclerView.LayoutManager myLayoutManager;
+    private final Context context;
 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
-    private static final int VOID_LIST=3;
 
     public static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         public final Button myListButton;
@@ -51,13 +51,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
             menu.add(0, v.getId(), 0, "Delete");
-            if(((RecyclerView)v.getParent()).getId() == R.id.bookmarklistsView){
-                menu.add(0, v.getId(), 0, "Remove Bookmark");
-
-            }
-            else {
-                menu.add(0, v.getId(), 0, "Bookmark");
-            }
+            menu.add(0, v.getId(), 0, "Bookmark");
         }
     }
 
@@ -70,19 +64,12 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private static class VoidListHolder extends RecyclerView.ViewHolder{
-        private final TextView textView;
-        private VoidListHolder(TextView textView){
-            super(textView);
-            this.textView=textView;
-        }
-    }
-
-    public ListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager){
+    public ListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager,Context context){
         this.model=model;
         this.myLayoutManager=layoutManager;
         this.isAddNewPresent=false;
         this.editingText="";
+        this.context=context;
     }
 
     @Override
@@ -102,6 +89,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 newList.setOnClickListener(new ListButtonListener());
                 return vh;
             case ADDNEW_TYPE:
+            default:
                 setAddNewPresent(true);
                 LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_layout,parent,false);
                 AddNewListHolder vh1=new AddNewListHolder(addNew);
@@ -136,12 +124,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(newListText, InputMethodManager.SHOW_IMPLICIT);
                 return vh1;
-            case VOID_LIST:
-            default:
-                TextView textView=(TextView)LayoutInflater.from(parent.getContext()).inflate(R.layout.messagetext_layout,parent,false);
-                VoidListHolder vh2=new VoidListHolder(textView);
-                ((TextView)vh2.textView).setText("There is no list here");
-                return vh2;
         }
     }
 
@@ -179,6 +161,13 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.contextMenuList=button;
     }
 
+    //Delete the button previously stored for the contextmenu
+    public void deleteContextMenuList(){
+        Button b=new Button(this.context);
+        b.setText("");
+        this.contextMenuList=b;
+    }
+
     //Functions used to get the Button which has been longpressed
     public Button getContextMenuList(){
         return this.contextMenuList;
@@ -200,18 +189,18 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onClick(View view){
             LinearLayout container=(LinearLayout)view.getParent();
             EditText editText=(EditText)container.getChildAt(1);
+            Context context = view.getContext().getApplicationContext();
             if(editText.getText().toString().equals("")){
-                Context context = view.getContext().getApplicationContext();
-                CharSequence text = "You can't add an empty list";
+                CharSequence text = context.getResources().getString(R.string.emptyListError);
                 int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.setGravity(Gravity.CENTER,0,0);
                 toast.show();
             }
-            else if(model.getItems().keySet().contains(editText.getText().toString())){
-                Context context = view.getContext().getApplicationContext();
-                CharSequence text = "List already exists";
+            else if(model.getItems().keySet().contains(editText.getText().toString().toUpperCase())
+                    || model.getBookmarkItems().keySet().contains(editText.getText().toString().toUpperCase())){
+                CharSequence text = context.getResources().getString(R.string.duplicateListError);
                 int duration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, text, duration);

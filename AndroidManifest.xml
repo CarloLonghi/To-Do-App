@@ -12,7 +12,7 @@
         android:logo="@android:color/transparent"
         android:theme="@style/ToDoAppTheme">
         <activity
-            android:name=".activities.ScreenSlidePagerActivity"
+            android:name=".activities.MainActivity"
             android:theme="@style/ToDoAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
         </activity>
         <activity
             android:name=".activities.ItemsActivity"
-            android:parentActivityName=".activities.ScreenSlidePagerActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/ToDoAppTheme">
         </activity>
     </application>

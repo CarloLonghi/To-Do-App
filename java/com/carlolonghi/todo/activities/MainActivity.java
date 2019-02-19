@@ -8,13 +8,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 
-import com.carlolonghi.todo.fragments.MenuActivity;
-import com.carlolonghi.todo.fragments.TodaysActivity;
+import com.carlolonghi.todo.fragments.ListsFragment;
+import com.carlolonghi.todo.fragments.TodaysFragment;
 import com.carlolonghi.todo.R;
 
-public class ScreenSlidePagerActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
 
     private static final int NUM_PAGES = 2;
@@ -54,9 +53,9 @@ public class ScreenSlidePagerActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             if(position==0)
-                return new TodaysActivity();
+                return new TodaysFragment();
             else
-                return new MenuActivity();
+                return new ListsFragment();
         }
 
         @Override
