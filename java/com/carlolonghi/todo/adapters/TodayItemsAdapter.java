@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,8 +41,8 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // Provide a reference to the views for each data item
     private static class ItemsViewHolder extends RecyclerView.ViewHolder {
-        private final LinearLayout myCheckBoxContainer;
-        public ItemsViewHolder(LinearLayout checkBox) {
+        private final FrameLayout myCheckBoxContainer;
+        public ItemsViewHolder(FrameLayout checkBox) {
             super(checkBox);
             myCheckBoxContainer = checkBox;
         }
@@ -81,7 +82,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override @NonNull
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
-        LinearLayout newItem;
+        FrameLayout newItem;
         switch(viewType) {
             case ADDNEW_TYPE:
                 final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_reverse_layout,parent,false);
@@ -113,7 +114,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             case CHECKEDITEM_TYPE:
             case NEWITEM_TYPE:
             default:
-                newItem = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
+                newItem = (FrameLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
                 TodayItemsAdapter.ItemsViewHolder vh1 = new TodayItemsAdapter.ItemsViewHolder(newItem);
                 return vh1;
         }
@@ -133,7 +134,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if(itemType==NEWITEM_TYPE){
             final ItemWithDate item=items.getNonCheckedItems().get(position);
             String text=item.getName();
-            CheckBox checkBox=((CheckBox)((TodayItemsAdapter.ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(0));
+            CheckBox checkBox=((CheckBox)((TodayItemsAdapter.ItemsViewHolder)holder).myCheckBoxContainer.getChildAt(1));
             checkBox.setText(text);
             checkBox.setChecked(false);
             checkBox.setEnabled(true);
