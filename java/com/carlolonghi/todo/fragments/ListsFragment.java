@@ -1,9 +1,12 @@
 package com.carlolonghi.todo.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.carlolonghi.todo.adapters.ListsAdapter;
+import com.carlolonghi.todo.data.Items;
 import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.adapters.BMListsAdapter;
 import com.carlolonghi.todo.R;
@@ -136,12 +140,20 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
     public boolean onContextItemSelected(MenuItem item) {
         Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
         Button bmContextMenuList=((BMListsAdapter)bmListsAdapter).getContextMenuList();
+        String name;
         if(item.getTitle().equals("Delete")){
-            if(contextMenuList==null || contextMenuList.getText().toString().equals(""))
-                model.removeBMList(bmContextMenuList.getText().toString().toUpperCase());
-            else
-                model.removeList(contextMenuList.getText().toString().toUpperCase());
-            listsAdapter.notifyDataSetChanged();
+            if(contextMenuList==null || contextMenuList.getText().toString().equals("")) {
+                name=bmContextMenuList.getText().toString().toUpperCase();
+                model.removeBMList(name);
+                bmListsAdapter.notifyDataSetChanged();
+                showUndoSnackbar(name,true);
+            }
+            else {
+                name=contextMenuList.getText().toString().toUpperCase();
+                model.removeList(name);
+                listsAdapter.notifyDataSetChanged();
+                showUndoSnackbar(name,false);
+            }
             checkIfItemsAreEmpty();
         }
         else if(item.getTitle().equals("Bookmark")){
@@ -160,6 +172,27 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((BMListsAdapter)bmListsAdapter).deleteContextMenuList();
 
         return true;
+    }
+
+    private void showUndoSnackbar(final String name, final boolean isBookmark){
+        // showing snack bar with Undo option
+        Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), name + " removed from cart!", Snackbar.LENGTH_LONG);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // undo is selected, restore the deleted item
+                if(isBookmark) {
+                    model.addBMList(name);
+                    bmListsAdapter.notifyDataSetChanged();
+                }
+                else {
+                    model.addList(name);
+                    listsAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
     }
 
     //Regulates the presence of the "Others" title and of the empty Activity string

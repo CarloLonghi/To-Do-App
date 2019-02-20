@@ -31,7 +31,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean isAddNewPresent;
     private String editingText;
-    private final ItemsViewModel model;
+    private ItemsViewModel model;
     private Button contextMenuList;
     private final RecyclerView.LayoutManager myLayoutManager;
     private final Context context;

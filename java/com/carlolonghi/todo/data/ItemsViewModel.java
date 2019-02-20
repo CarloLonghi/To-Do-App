@@ -72,6 +72,10 @@ public class ItemsViewModel extends AndroidViewModel {
         items.put(listTitle.toUpperCase(),new Items());
     }
 
+    public void addBMList(String listTitle){
+        bookmarkItems.put(listTitle.toUpperCase(),new Items());
+    }
+
     public void removeList(String listTitle) {items.remove(listTitle);}
 
     public void removeBMList(String listTitle) {bookmarkItems.remove(listTitle);}

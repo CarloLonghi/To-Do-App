@@ -6,8 +6,8 @@
     <string name="others">Others</string>
     <string name="plusSymbol">+</string>
     <string name="emptyListError">You can\'t add an empty list</string>
-    <string name="duplicateListError">List already exists</string>
+    <string name="duplicateListError">This list already exists</string>
     <string name="emptyItemError">You can\'t add an empty item</string>
-    <string name="duplicateItemError">Item already exists</string>
+    <string name="duplicateItemError">This item already exists</string>
 
 </resources>
