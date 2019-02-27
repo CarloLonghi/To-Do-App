@@ -45,7 +45,7 @@ public class TodaysFragment extends Fragment {
         this.model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
         // specify an adapter
-        myAdapter = new TodayItemsAdapter(model);
+        myAdapter = new TodayItemsAdapter(model,this.getContext());
         myRecyclerView.setAdapter(myAdapter);
 
         ItemTouchHelper.Callback callback = new MyItemTouchHelper((MyItemTouchHelper.ItemTouchHelperAdapter)myAdapter);

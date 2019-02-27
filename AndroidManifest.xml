@@ -25,6 +25,19 @@
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/ToDoAppTheme">
         </activity>
+
+        <receiver android:name=".widget.ToDoWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@layout/widget_provider" />
+        </receiver>
+
+        <service android:name=".widget.MyWidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 
 </manifest>

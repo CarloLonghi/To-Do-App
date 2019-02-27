@@ -10,5 +10,6 @@
     <string name="duplicateListError">Esta lista ya existe</string>
     <string name="emptyItemError">No se puede agregar un elemento vacío</string>
     <string name="duplicateItemError">Este elemento ya existe</string>
+    <string name="widgetTitle">ToDo Hoy</string>
 
 </resources>

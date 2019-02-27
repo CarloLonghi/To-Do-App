@@ -65,7 +65,11 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         checkIfItemsAreEmpty();
 
         // specify an adapter (see also next example)
-        listsAdapter = new ListsAdapter(model, listsLayoutManager,this.getContext());
+        listsAdapter = new ListsAdapter(model.getKeySet());
+        ((ListsAdapter) listsAdapter).setModel(model);
+        ((ListsAdapter) listsAdapter).setMyLayoutManager(listsLayoutManager);
+        ((ListsAdapter) listsAdapter).setContext(this.getContext());
+
         listsRecyclerView.setAdapter(listsAdapter);
         bmListsAdapter=new BMListsAdapter(model,bmListsLayoutManager,this.getContext());
         bmListsRecyclerView.setAdapter(bmListsAdapter);
@@ -121,6 +125,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         //Add the edittext where the user has to type the title of the new list
         ((ListsAdapter)listsAdapter).setAddNewPresent(true);
         model.addList("addnew");
+        ((ListsAdapter) listsAdapter).addList("ADDNEW");
         listsAdapter.notifyDataSetChanged();
         listsRecyclerView.scrollToPosition(model.getKeySet().size()-1);
     }
@@ -146,13 +151,12 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
                 name=bmContextMenuList.getText().toString().toUpperCase();
                 model.removeBMList(name);
                 bmListsAdapter.notifyDataSetChanged();
-                showUndoSnackbar(name,true);
             }
             else {
                 name=contextMenuList.getText().toString().toUpperCase();
                 model.removeList(name);
+                ((ListsAdapter) listsAdapter).removeList(name);
                 listsAdapter.notifyDataSetChanged();
-                showUndoSnackbar(name,false);
             }
             checkIfItemsAreEmpty();
         }
@@ -172,27 +176,6 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((BMListsAdapter)bmListsAdapter).deleteContextMenuList();
 
         return true;
-    }
-
-    private void showUndoSnackbar(final String name, final boolean isBookmark){
-        // showing snack bar with Undo option
-        Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), name + " removed from cart!", Snackbar.LENGTH_LONG);
-        snackbar.setAction("UNDO", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // undo is selected, restore the deleted item
-                if(isBookmark) {
-                    model.addBMList(name);
-                    bmListsAdapter.notifyDataSetChanged();
-                }
-                else {
-                    model.addList(name);
-                    listsAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        snackbar.setActionTextColor(Color.YELLOW);
-        snackbar.show();
     }
 
     //Regulates the presence of the "Others" title and of the empty Activity string

@@ -26,15 +26,17 @@ import com.carlolonghi.todo.others.ListButtonListener;
 import com.carlolonghi.todo.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private boolean isAddNewPresent;
     private String editingText;
     private ItemsViewModel model;
+    private List<String> items;
     private Button contextMenuList;
-    private final RecyclerView.LayoutManager myLayoutManager;
-    private final Context context;
+    private RecyclerView.LayoutManager myLayoutManager;
+    private Context context;
 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
@@ -64,18 +66,16 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public ListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager,Context context){
-        this.model=model;
-        this.myLayoutManager=layoutManager;
+    public ListsAdapter(List<String> items){
+        this.items=items;
         this.isAddNewPresent=false;
         this.editingText="";
-        this.context=context;
     }
 
     @Override
     public int getItemViewType(int position) {
-        int itemsSize=model.getKeySet().size();
-        if(position==itemsSize-1 && model.getKeySet().get(itemsSize-1).equals("ADDNEW"))
+        int itemsSize=items.size();
+        if(position==itemsSize-1 && items.get(itemsSize-1).equals("ADDNEW"))
             return ADDNEW_TYPE;
         else return NEWLIST_TYPE;
     }
@@ -133,8 +133,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         //Get element from your dataset at this position
         int itemType=getItemViewType(position);
         if(itemType==NEWLIST_TYPE){
-            ArrayList<String> keySet=new ArrayList<>(model.getItems().keySet());
-            String text=keySet.get(position);
+            String text=items.get(position);
             Button listButton=((ListViewHolder)holder).myListButton;
             listButton.setText(text);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -176,7 +175,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return model.getKeySet().size();
+        return items.size();
     }
 
 
@@ -198,7 +197,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 toast.setGravity(Gravity.CENTER,0,0);
                 toast.show();
             }
-            else if(model.getItems().keySet().contains(editText.getText().toString().toUpperCase())
+            else if(items.contains(editText.getText().toString().toUpperCase())
                     || model.getBookmarkItems().keySet().contains(editText.getText().toString().toUpperCase())){
                 CharSequence text = context.getResources().getString(R.string.duplicateListError);
                 int duration = Toast.LENGTH_SHORT;
@@ -211,6 +210,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 String text=editText.getText().toString();
                 removeAddNew();
                 model.addList(text);
+                items.add(text);
                 setAddNewPresent(false);
                 ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 editText.setText("");
@@ -226,6 +226,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void removeAddNew(){
         if(isAddNewPresent){
             model.removeList("ADDNEW");
+            items.remove("ADDNEW");
             setAddNewPresent(false);
             notifyDataSetChanged();
         }
@@ -238,5 +239,25 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             editText.setText(text);
             editText.setSelection(text.length());
         }
+    }
+
+    public void addList(String listTitle){
+        this.items.add(listTitle);
+    }
+
+    public void removeList(String listTitle){
+        this.items.remove(listTitle);
+    }
+
+    public void setModel(ItemsViewModel model){
+        this.model=model;
+    }
+
+    public void setMyLayoutManager(RecyclerView.LayoutManager layoutManager){
+        this.myLayoutManager=layoutManager;
+    }
+
+    public void setContext(Context context){
+        this.context=context;
     }
 }

@@ -9,5 +9,6 @@
     <string name="duplicateListError">This list already exists</string>
     <string name="emptyItemError">You can\'t add an empty item</string>
     <string name="duplicateItemError">This item already exists</string>
+    <string name="widgetTitle">ToDo Today</string>
 
 </resources>

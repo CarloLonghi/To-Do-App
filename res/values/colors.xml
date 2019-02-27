@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#d3ae0e</color>
     <color name="shadewhite">#fff1b5</color>
     <color name="deleteAnimationColor">#ed5656</color>
+    <color name="transparentWhite">#44ffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>
 
 

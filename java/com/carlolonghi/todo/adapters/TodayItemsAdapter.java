@@ -1,7 +1,10 @@
 package com.carlolonghi.todo.adapters;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -25,6 +28,9 @@ import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.R;
 import com.carlolonghi.todo.data.ItemWithDate;
 import com.carlolonghi.todo.data.TodayItems;
+import com.carlolonghi.todo.widget.MyWidgetRemoteViewsFactory;
+import com.carlolonghi.todo.widget.MyWidgetRemoteViewsService;
+import com.carlolonghi.todo.widget.ToDoWidgetProvider;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -38,6 +44,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final TodayItems items;
     private String editingText;
     private final ItemsViewModel model;
+    private final Context context;
 
     // Provide a reference to the views for each data item
     private static class ItemsViewHolder extends RecyclerView.ViewHolder {
@@ -57,9 +64,10 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     //The adapter's constructor in case we are viewing the todaysItems list
-    public TodayItemsAdapter(ItemsViewModel model){
+    public TodayItemsAdapter(ItemsViewModel model,Context context){
         this.model=model;
         this.editingText="";
+        this.context=context;
 
         this.items=model.getTodaysItems();
     }
@@ -149,6 +157,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     adapter.notifyItemRemoved(position);
                     items.addCheckedItem(new ItemWithDate(text,item.getDay(),item.getYear()));
                     adapter.notifyItemInserted(getItemCount()-1);
+                    updateWidgets();
                 }
             });
         }
@@ -170,6 +179,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     adapter.notifyItemRemoved(position);
                     items.addNonCheckedItem(new ItemWithDate(text,item.getDay(),item.getYear()));
                     adapter.notifyItemInserted(items.getNonCheckedItems().size()-1);
+                    updateWidgets();
                 }
             });
         }
@@ -179,6 +189,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onItemDismiss(int position) {
         items.remove(position);
         notifyItemRemoved(position);
+        updateWidgets();
     }
 
     @Override
@@ -243,12 +254,21 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((RecyclerView) container.getParent()).getAdapter().notifyItemInserted(items.getNonCheckedItems().size());
                 editText.setText("");
                 editingText="";
+                updateWidgets();
             }
             editText.requestFocus();
             Activity activity = (Activity) view.getContext();
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    //update the widgets
+    private void updateWidgets(){
+        AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
+        ComponentName widgetComponent = new ComponentName(context, ToDoWidgetProvider.class);
+        int[] widgetIds = widgetManager.getAppWidgetIds(widgetComponent);
+        widgetManager.notifyAppWidgetViewDataChanged(widgetIds, R.id.widgetListView);
     }
 }
 

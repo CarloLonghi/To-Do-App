@@ -1,0 +1,38 @@
+<!--The layout for the widget-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <FrameLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/widgetTitleLabel"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="start"
+            android:text="@string/widgetTitle"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingStart="3dp"
+            android:paddingEnd="2dp"/>
+    </FrameLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/widgetListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparentWhite"
+            android:divider="@color/transparentWhite"
+            android:dividerHeight="1dp"
+            tools:listitem="@layout/widget_list_item" />
+    </LinearLayout>
+
+</LinearLayout>
