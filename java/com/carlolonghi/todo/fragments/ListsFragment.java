@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -143,9 +144,9 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
     //Manages the context menu choices
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
-        Button bmContextMenuList=((BMListsAdapter)bmListsAdapter).getContextMenuList();
-        String name;
+        final Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
+        final Button bmContextMenuList=((BMListsAdapter)bmListsAdapter).getContextMenuList();
+        final String name;
         if(item.getTitle().equals("Delete")){
             if(contextMenuList==null || contextMenuList.getText().toString().equals("")) {
                 name=bmContextMenuList.getText().toString().toUpperCase();
@@ -155,7 +156,6 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
             else {
                 name=contextMenuList.getText().toString().toUpperCase();
                 model.removeList(name);
-                ((ListsAdapter) listsAdapter).removeList(name);
                 listsAdapter.notifyDataSetChanged();
             }
             checkIfItemsAreEmpty();

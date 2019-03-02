@@ -245,10 +245,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.items.add(listTitle);
     }
 
-    public void removeList(String listTitle){
-        this.items.remove(listTitle);
-    }
-
     public void setModel(ItemsViewModel model){
         this.model=model;
     }
