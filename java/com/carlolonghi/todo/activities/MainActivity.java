@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int NUM_PAGES = 2;
     private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
         TabLayout tabLayout=(TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(mPager);
 
         getSupportActionBar().setBackgroundDrawable(getDrawable(R.drawable.actionbar_background));
-
     }
 
     @Override
@@ -66,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position){
             if(position==0)
-                return "Today";
+                return getResources().getString(R.string.todayFragmentTitle);
             else
-                return "Lists";
+                return getResources().getString(R.string.listsFragmentTitle);
         }
     }
 

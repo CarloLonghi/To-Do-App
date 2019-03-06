@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The layout of the button that represents a list -->
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/listButton"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@drawable/list_button"

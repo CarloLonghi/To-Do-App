@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
+
     <FrameLayout android:layout_width="match_parent"
+        android:id="@+id/widgetContainer"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/widgetTitleLabel"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:background="@color/colorPrimaryDark"
@@ -25,6 +26,22 @@
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/emptyWidgetText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="3dp"
+            android:paddingEnd="2dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginTop="2dp"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:background="@color/transparentWhite"
+            android:gravity="start"
+            android:text="@string/emptyWidget" />
+
         <ListView
             android:id="@+id/widgetListView"
             android:layout_width="match_parent"
@@ -32,6 +49,7 @@
             android:background="@color/transparentWhite"
             android:divider="@color/transparentWhite"
             android:dividerHeight="1dp"
+            android:layout_marginTop="2dp"
             tools:listitem="@layout/widget_list_item" />
     </LinearLayout>
 

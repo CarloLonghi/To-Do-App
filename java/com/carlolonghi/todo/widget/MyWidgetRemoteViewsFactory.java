@@ -1,27 +1,21 @@
 package com.carlolonghi.todo.widget;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Binder;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.carlolonghi.todo.R;
-import com.carlolonghi.todo.data.Items;
-import com.carlolonghi.todo.data.ItemsViewModel;
+import com.carlolonghi.todo.activities.MainActivity;
 import com.carlolonghi.todo.data.TodayItems;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.LinkedHashMap;
 
 public class MyWidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private Context mContext;
+    private final Context mContext;
     private TodayItems todaysItems;
 
     public MyWidgetRemoteViewsFactory(Context applicationContext, Intent intent) {
@@ -65,12 +59,16 @@ public class MyWidgetRemoteViewsFactory implements RemoteViewsService.RemoteView
 
     @Override
     public RemoteViews getViewAt(int position) {
-        if (position == AdapterView.INVALID_POSITION) {
+        if (position == AdapterView.INVALID_POSITION)
             return null;
-        }
 
+        //Sets the text of the items
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
         rv.setTextViewText(R.id.widgetItemTaskNameLabel, todaysItems.getNonCheckedItems().get(position).getName());
+
+        //Opens the app if the items are clicked
+        Intent intent = new Intent(mContext, MainActivity.class);
+        rv.setOnClickFillInIntent(R.id.widgetItemContainer, intent);
 
         return rv;
     }

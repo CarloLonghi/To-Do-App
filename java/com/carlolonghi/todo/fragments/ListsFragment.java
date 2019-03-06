@@ -1,13 +1,9 @@
 package com.carlolonghi.todo.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.carlolonghi.todo.adapters.ListsAdapter;
-import com.carlolonghi.todo.data.Items;
 import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.adapters.BMListsAdapter;
 import com.carlolonghi.todo.R;
@@ -32,8 +27,6 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView bmListsRecyclerView;
     private RecyclerView.Adapter listsAdapter;
     private RecyclerView.Adapter bmListsAdapter;
-    private RecyclerView.LayoutManager listsLayoutManager;
-    private RecyclerView.LayoutManager bmListsLayoutManager;
     private ViewGroup rootView;
 
     //The spacing between lists in the recyclerview
@@ -55,9 +48,9 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         bmListsRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        listsLayoutManager = new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager listsLayoutManager = new LinearLayoutManager(this.getContext());
         listsRecyclerView.setLayoutManager(listsLayoutManager);
-        bmListsLayoutManager=new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager bmListsLayoutManager=new LinearLayoutManager(this.getContext());
         bmListsRecyclerView.setLayoutManager(bmListsLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items
@@ -72,7 +65,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((ListsAdapter) listsAdapter).setContext(this.getContext());
 
         listsRecyclerView.setAdapter(listsAdapter);
-        bmListsAdapter=new BMListsAdapter(model,bmListsLayoutManager,this.getContext());
+        bmListsAdapter=new BMListsAdapter(model,this.getContext());
         bmListsRecyclerView.setAdapter(bmListsAdapter);
 
         // sets a vertical space between the recyclerview items

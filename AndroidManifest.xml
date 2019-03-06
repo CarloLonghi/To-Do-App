@@ -11,15 +11,18 @@
         android:supportsRtl="true"
         android:logo="@android:color/transparent"
         android:theme="@style/ToDoAppTheme">
+
         <activity
             android:name=".activities.MainActivity"
-            android:theme="@style/ToDoAppTheme">
+            android:theme="@style/ToDoAppTheme"
+            android:launchMode="singleTop">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.ItemsActivity"
             android:parentActivityName=".activities.MainActivity"
@@ -38,7 +41,7 @@
 
         <service android:name=".widget.MyWidgetRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
-    </application>
 
+    </application>
 </manifest>
 

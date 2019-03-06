@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -18,7 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +26,6 @@ import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.R;
 import com.carlolonghi.todo.data.ItemWithDate;
 import com.carlolonghi.todo.data.TodayItems;
-import com.carlolonghi.todo.widget.MyWidgetRemoteViewsFactory;
-import com.carlolonghi.todo.widget.MyWidgetRemoteViewsService;
 import com.carlolonghi.todo.widget.ToDoWidgetProvider;
 
 import java.util.Calendar;
@@ -43,13 +39,12 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final TodayItems items;
     private String editingText;
-    private final ItemsViewModel model;
     private final Context context;
 
     // Provide a reference to the views for each data item
     private static class ItemsViewHolder extends RecyclerView.ViewHolder {
         private final LinearLayout myCheckBoxContainer;
-        public ItemsViewHolder(LinearLayout checkBox) {
+        private ItemsViewHolder(LinearLayout checkBox) {
             super(checkBox);
             myCheckBoxContainer = checkBox;
         }
@@ -57,7 +52,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static class AddNewItemViewHolder extends  RecyclerView.ViewHolder{
         private final LinearLayout newItemLayout;
-        public AddNewItemViewHolder(LinearLayout newItemLayout){
+        private AddNewItemViewHolder(LinearLayout newItemLayout){
             super(newItemLayout);
             this.newItemLayout=newItemLayout;
         }
@@ -65,7 +60,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //The adapter's constructor in case we are viewing the todaysItems list
     public TodayItemsAdapter(ItemsViewModel model,Context context){
-        this.model=model;
         this.editingText="";
         this.context=context;
 

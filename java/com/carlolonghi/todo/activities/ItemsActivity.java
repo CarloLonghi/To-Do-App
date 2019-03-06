@@ -21,21 +21,19 @@ public class ItemsActivity extends AppCompatActivity {
 
     private String listTitle;
     private ItemsViewModel model;
-    private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
-        myRecyclerView= findViewById(R.id.myRecyclerView);
+        RecyclerView myRecyclerView= findViewById(R.id.myRecyclerView);
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         myRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        myLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager myLayoutManager = new LinearLayoutManager(this);
         myRecyclerView.setLayoutManager(myLayoutManager);
 
         Intent intent = getIntent();

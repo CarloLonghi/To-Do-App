@@ -20,10 +20,7 @@ import com.carlolonghi.todo.R;
 public class TodaysFragment extends Fragment {
 
     private ItemsViewModel model;
-    private RecyclerView myRecyclerView;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLayoutManager;
-    private String editingText="";
     private ViewGroup rootView;
 
     @Override
@@ -32,13 +29,13 @@ public class TodaysFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(
                 R.layout.activity_items, container, false);
 
-        myRecyclerView=(RecyclerView) rootView.findViewById(R.id.myRecyclerView);
+        RecyclerView myRecyclerView=(RecyclerView) rootView.findViewById(R.id.myRecyclerView);
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         myRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        myLayoutManager = new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager myLayoutManager = new LinearLayoutManager(this.getContext());
         myRecyclerView.setLayoutManager(myLayoutManager);
 
         //Gets the ViewModel that reads and holds the application data and read the Map of items

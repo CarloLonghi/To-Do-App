@@ -19,7 +19,6 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final ItemsViewModel model;
     private Button contextMenuList;
-    private final RecyclerView.LayoutManager myLayoutManager;
     private final Context context;
 
     private static final int NEWLIST_TYPE = 1;
@@ -41,9 +40,8 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public BMListsAdapter(ItemsViewModel model, RecyclerView.LayoutManager layoutManager,Context context) {
+    public BMListsAdapter(ItemsViewModel model,Context context) {
         this.model = model;
-        this.myLayoutManager = layoutManager;
         this.context=context;
     }
 

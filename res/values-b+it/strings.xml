@@ -11,5 +11,8 @@
     <string name="emptyItemError">Non puoi aggiungere un elemento vuoto</string>
     <string name="duplicateItemError">Questo elemento esiste già</string>
     <string name="widgetTitle">ToDo Oggi</string>
+    <string name="emptyWidget">Niente da fare oggi!</string>
+    <string name="todayFragmentTitle">Oggi</string>
+    <string name="listsFragmentTitle">Liste</string>
 
 </resources>

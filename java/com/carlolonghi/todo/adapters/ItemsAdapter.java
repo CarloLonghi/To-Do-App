@@ -33,30 +33,26 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int ADDNEW_TYPE=0;
 
     private final Items items;
-    private final String listTitle;
     private String editingText;
-    private final ItemsViewModel model;
 
     // Provide a reference to the views for each data item
-    public static class ItemsViewHolder extends RecyclerView.ViewHolder {
-        public final LinearLayout myCheckBoxContainer;
-        public ItemsViewHolder(LinearLayout checkBox) {
+    private static class ItemsViewHolder extends RecyclerView.ViewHolder {
+        private final LinearLayout myCheckBoxContainer;
+        private ItemsViewHolder(LinearLayout checkBox) {
             super(checkBox);
             myCheckBoxContainer = checkBox;
         }
     }
 
     public static class AddNewItemViewHolder extends  RecyclerView.ViewHolder{
-        public final LinearLayout newItemLayout;
-        public AddNewItemViewHolder(LinearLayout newItemLayout){
+        private final LinearLayout newItemLayout;
+        private AddNewItemViewHolder(LinearLayout newItemLayout){
             super(newItemLayout);
             this.newItemLayout=newItemLayout;
         }
     }
 
     public ItemsAdapter(String listTitle, ItemsViewModel model) {
-        this.model=model;
-        this.listTitle=listTitle;
         this.editingText="";
 
         if(model.isBookmark(listTitle))
@@ -208,8 +204,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        Items tmp=items;
-        return tmp.getTotalSize()+1;
+        return items.getTotalSize()+1;
     }
 
     public void setEditingText(String editingText){

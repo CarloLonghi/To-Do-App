@@ -25,7 +25,6 @@ import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.others.ListButtonListener;
 import com.carlolonghi.todo.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -41,8 +40,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int NEWLIST_TYPE=1;
     private static final int ADDNEW_TYPE=2;
 
-    public static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        public final Button myListButton;
+    private static class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        private final Button myListButton;
         private ListViewHolder(Button listButton) {
             super(listButton);
             myListButton = listButton;
