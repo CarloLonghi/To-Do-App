@@ -14,12 +14,15 @@ import com.carlolonghi.todo.others.ListButtonListener;
 import com.carlolonghi.todo.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final ItemsViewModel model;
+    private ItemsViewModel model;
     private Button contextMenuList;
-    private final Context context;
+    private Context context;
+    private List<String> items;
+
 
     private static final int NEWLIST_TYPE = 1;
 
@@ -40,8 +43,15 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public BMListsAdapter(ItemsViewModel model,Context context) {
-        this.model = model;
+    public BMListsAdapter(List<String> items) {
+        this.items=items;
+    }
+
+    public void setModel(ItemsViewModel model){
+        this.model=model;
+    }
+
+    public void setContext(Context context){
         this.context=context;
     }
 
@@ -62,8 +72,7 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull  final RecyclerView.ViewHolder holder, int position) {
         //Get element from your dataset at this position
-        ArrayList<String> keySet = new ArrayList<>(model.getBookmarkItems().keySet());
-        String text = keySet.get(position);
+        String text = items.get(position);
         Button listButton = ((BMListsAdapter.ListViewHolder) holder).myListButton;
         listButton.setText(text);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -96,6 +105,14 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return model.getBMKeySet().size();
+        return items.size();
+    }
+
+    public void addList(String listTitle){
+        this.items.add(listTitle.toUpperCase());
+    }
+
+    public void removeList(String listTitle){
+        this.items.remove(listTitle.toUpperCase());
     }
 }

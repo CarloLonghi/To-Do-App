@@ -63,9 +63,11 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((ListsAdapter) listsAdapter).setModel(model);
         ((ListsAdapter) listsAdapter).setMyLayoutManager(listsLayoutManager);
         ((ListsAdapter) listsAdapter).setContext(this.getContext());
-
         listsRecyclerView.setAdapter(listsAdapter);
-        bmListsAdapter=new BMListsAdapter(model,this.getContext());
+
+        bmListsAdapter=new BMListsAdapter(model.getBMKeySet());
+        ((BMListsAdapter)bmListsAdapter).setModel(model);
+        ((BMListsAdapter)bmListsAdapter).setContext(this.getContext());
         bmListsRecyclerView.setAdapter(bmListsAdapter);
 
         // sets a vertical space between the recyclerview items
@@ -116,6 +118,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         disableAddButton();
         listsRecyclerView.setVisibility(View.VISIBLE);
         ((TextView)rootView.findViewById(R.id.emptyRecyclerViewText)).setVisibility(View.GONE);
+
         //Add the edittext where the user has to type the title of the new list
         ((ListsAdapter)listsAdapter).setAddNewPresent(true);
         model.addList("addnew");
@@ -144,23 +147,29 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
             if(contextMenuList==null || contextMenuList.getText().toString().equals("")) {
                 name=bmContextMenuList.getText().toString().toUpperCase();
                 model.removeBMList(name);
+                ((BMListsAdapter)bmListsAdapter).removeList(name);
                 bmListsAdapter.notifyDataSetChanged();
             }
             else {
                 name=contextMenuList.getText().toString().toUpperCase();
                 model.removeList(name);
+                ((ListsAdapter)listsAdapter).removeList(name);
                 listsAdapter.notifyDataSetChanged();
             }
             checkIfItemsAreEmpty();
         }
         else if(item.getTitle().equals("Bookmark")){
             model.bookmarkList(contextMenuList.getText().toString().toUpperCase());
+            ((ListsAdapter)listsAdapter).removeList(contextMenuList.getText().toString());
+            ((BMListsAdapter)bmListsAdapter).addList(contextMenuList.getText().toString());
             listsAdapter.notifyDataSetChanged();
             bmListsAdapter.notifyDataSetChanged();
             checkIfItemsAreEmpty();
         }
         else if(item.getTitle().equals("Remove Bookmark")){
             model.unbookmarkList(bmContextMenuList.getText().toString().toUpperCase());
+            ((BMListsAdapter)bmListsAdapter).removeList(bmContextMenuList.getText().toString());
+            ((ListsAdapter)listsAdapter).addList(bmContextMenuList.getText().toString());
             listsAdapter.notifyDataSetChanged();
             bmListsAdapter.notifyDataSetChanged();
             checkIfItemsAreEmpty();

@@ -151,20 +151,17 @@ public class ItemsViewModel extends AndroidViewModel {
         return todaysItems;
     }
 
-    //A funtion to update the modelView version of the lists
     public void updateItems(String listTitle,Items items){
         this.items.put(listTitle,items);
     }
 
     public void updateBookmarkItems(String listTitle,Items items){ this.bookmarkItems.put(listTitle,items); }
 
-    //A funtion to update the modelView version of of todaysItems
     public void updateTodaysItems(TodayItems items){
         this.todaysItems=items;
     }
 
-    //Tells if the string is the title of a list with bookmark or not
-    public boolean isBookmark(String listTitle){
+    public boolean hasBookmark(String listTitle){
         return bookmarkItems.containsKey(listTitle);
     }
 }

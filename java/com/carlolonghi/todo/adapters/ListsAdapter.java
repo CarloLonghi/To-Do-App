@@ -71,6 +71,18 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.editingText="";
     }
 
+    public void setModel(ItemsViewModel model){
+        this.model=model;
+    }
+
+    public void setMyLayoutManager(RecyclerView.LayoutManager layoutManager){
+        this.myLayoutManager=layoutManager;
+    }
+
+    public void setContext(Context context){
+        this.context=context;
+    }
+
     @Override
     public int getItemViewType(int position) {
         int itemsSize=items.size();
@@ -209,7 +221,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 String text=editText.getText().toString();
                 removeAddNew();
                 model.addList(text);
-                items.add(text);
+                items.add(text.toUpperCase());
                 setAddNewPresent(false);
                 ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();
                 editText.setText("");
@@ -241,18 +253,10 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addList(String listTitle){
-        this.items.add(listTitle);
+        this.items.add(listTitle.toUpperCase());
     }
 
-    public void setModel(ItemsViewModel model){
-        this.model=model;
-    }
-
-    public void setMyLayoutManager(RecyclerView.LayoutManager layoutManager){
-        this.myLayoutManager=layoutManager;
-    }
-
-    public void setContext(Context context){
-        this.context=context;
+    public void removeList(String listTitle){
+        this.items.remove(listTitle.toUpperCase());
     }
 }
