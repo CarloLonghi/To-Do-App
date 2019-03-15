@@ -41,7 +41,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private String editingText;
     private final Context context;
 
-    // Provide a reference to the views for each data item
+    // The ViewHolder for the items
     private static class ItemsViewHolder extends RecyclerView.ViewHolder {
         private final LinearLayout myCheckBoxContainer;
         private ItemsViewHolder(LinearLayout checkBox) {
@@ -50,6 +50,7 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    // The ViewHolder for edittext and button to add new items
     private static class AddNewItemViewHolder extends  RecyclerView.ViewHolder{
         private final LinearLayout newItemLayout;
         private AddNewItemViewHolder(LinearLayout newItemLayout){
@@ -58,7 +59,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    //The adapter's constructor in case we are viewing the todaysItems list
     public TodayItemsAdapter(ItemsViewModel model,Context context){
         this.editingText="";
         this.context=context;
@@ -80,10 +80,8 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             return CHECKEDITEM_TYPE;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override @NonNull
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // create a new view
         LinearLayout newItem;
         switch(viewType) {
             case ADDNEW_TYPE:
@@ -92,9 +90,9 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Button addNewButton=(Button)addNew.findViewById(R.id.addNewButton);
                 addNewButton.setOnClickListener(new TodayItemsAdapter.AddNewClickListener());
 
-                //This block of instructions regulates the correct behaviour of the EditText used to add the new items
-                //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
-                //the item is added to the list as the Add button has been pressed
+                // This block of instructions regulates the correct behaviour of the EditText used to add the new items
+                // the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
+                // the item is added to the list as the Add button has been pressed
                 EditText newItemText=(EditText)addNew.findViewById(R.id.addNewText);
                 newItemText.setHorizontallyScrolling(false);
                 newItemText.setMaxLines(Integer.MAX_VALUE);
@@ -104,7 +102,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
-                                //Calls the onClick of the Add button if the newLine is pressed
                                 (new TodayItemsAdapter.AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
                                 return true;
                             default:
@@ -122,11 +119,8 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        //Get element from your dataset at this position
-        //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
         if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((TodayItemsAdapter.AddNewItemViewHolder)holder).newItemLayout.getChildAt(0));
@@ -211,7 +205,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return items.getTotalSize()+1;
@@ -257,7 +250,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    //update the widgets
     private void updateWidgets(){
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
         ComponentName widgetComponent = new ComponentName(context, ToDoWidgetProvider.class);

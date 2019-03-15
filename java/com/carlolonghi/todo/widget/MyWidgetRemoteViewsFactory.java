@@ -32,7 +32,7 @@ public class MyWidgetRemoteViewsFactory implements RemoteViewsService.RemoteView
         loadItems();
     }
 
-    //Load the items from memory
+    // Load the items from memory
     private void loadItems(){
         todaysItems=new TodayItems();
         try{
@@ -62,11 +62,11 @@ public class MyWidgetRemoteViewsFactory implements RemoteViewsService.RemoteView
         if (position == AdapterView.INVALID_POSITION)
             return null;
 
-        //Sets the text of the items
+        // Sets the text of the items
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
         rv.setTextViewText(R.id.widgetItemTaskNameLabel, todaysItems.getNonCheckedItems().get(position).getName());
 
-        //Opens the app if the items are clicked
+        // Opens the app if the items are clicked
         Intent intent = new Intent(mContext, MainActivity.class);
         rv.setOnClickFillInIntent(R.id.widgetItemContainer, intent);
 

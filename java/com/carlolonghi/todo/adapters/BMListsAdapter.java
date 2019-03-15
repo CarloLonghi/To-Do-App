@@ -19,7 +19,7 @@ import java.util.List;
 public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ItemsViewModel model;
-    private Button contextMenuList;
+    private Button contextMenuList; // this variable keeps the button that has a contextmenu attached
     private Context context;
     private List<String> items;
 
@@ -35,7 +35,7 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             myListButton.setOnCreateContextMenuListener(this);
         }
 
-        //Creates the context menu when the lists are long-pressed
+        // Creates the context menu when the lists are long-pressed
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(0, v.getId(), 0, "Delete");
@@ -71,38 +71,32 @@ public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull  final RecyclerView.ViewHolder holder, int position) {
-        //Get element from your dataset at this position
         String text = items.get(position);
         Button listButton = ((BMListsAdapter.ListViewHolder) holder).myListButton;
         listButton.setText(text);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                //setPosition(holder.getPosition());
                 setContextMenuList((Button) v);
                 return false;
             }
         });
     }
 
-    //Used to set the variable contextMenuList when a list has been longpressed
     private void setContextMenuList(Button button) {
         this.contextMenuList = button;
     }
 
-    //Delete the button previously stored for the contextmenu
     public void deleteContextMenuList(){
         Button b=new Button(this.context);
         b.setText("");
         this.contextMenuList=b;
     }
 
-    //Functions used to get the Button which has been longpressed
     public Button getContextMenuList() {
         return this.contextMenuList;
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return items.size();

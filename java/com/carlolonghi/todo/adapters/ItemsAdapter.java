@@ -35,7 +35,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Items items;
     private String editingText;
 
-    // Provide a reference to the views for each data item
+    // The ViewHolder for the items
     private static class ItemsViewHolder extends RecyclerView.ViewHolder {
         private final LinearLayout myCheckBoxContainer;
         private ItemsViewHolder(LinearLayout checkBox) {
@@ -44,6 +44,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    // The ViewHolder for edittext and button to add new items
     public static class AddNewItemViewHolder extends  RecyclerView.ViewHolder{
         private final LinearLayout newItemLayout;
         private AddNewItemViewHolder(LinearLayout newItemLayout){
@@ -75,10 +76,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return CHECKEDITEM_TYPE;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override @NonNull
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // create a new view
         LinearLayout newItem;
         switch(viewType) {
             case ADDNEW_TYPE:
@@ -87,9 +86,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 Button addNewButton=(Button)addNew.findViewById(R.id.addNewButton);
                 addNewButton.setOnClickListener(new AddNewClickListener());
 
-                //This block of instructions regulates the correct behaviour of the EditText used to add the new items
-                //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
-                //the item is added to the list as the Add button has been pressed
+                // This block of instructions regulates the correct behaviour of the EditText used to add the new items
+                // the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
+                // the item is added to the list as the Add button has been pressed
                 EditText newItemText=(EditText)addNew.findViewById(R.id.addNewText);
                 newItemText.setHorizontallyScrolling(false);
                 newItemText.setMaxLines(Integer.MAX_VALUE);
@@ -99,7 +98,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
-                                //Calls the onClick of the Add button if the newLine is pressed
                                 (new AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
                                 return true;
                             default:
@@ -117,11 +115,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        //Get element from your dataset at this position
-        //Replace the contents of the view with that element
         int itemType=getItemViewType(position);
         if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((AddNewItemViewHolder)holder).newItemLayout.getChildAt(0));
@@ -201,7 +196,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return items.getTotalSize()+1;

@@ -17,7 +17,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         for (int appWidgetId : appWidgetIds) {
-            //Bind the widget with the factory used to retrive data
+            // Bind the widget with the factory used to retrive data
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             Intent intent = new Intent(context, MyWidgetRemoteViewsService.class);
             views.setRemoteAdapter(R.id.widgetListView, intent);
@@ -26,11 +26,8 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
             Intent intent1 = new Intent(context, MainActivity.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
-            //Here we add the onClick for the title of the widget
             views.setOnClickPendingIntent(R.id.widgetContainer, pendingIntent);
-            //Here we add the onClick for the empty widget message
             views.setOnClickPendingIntent(R.id.emptyWidgetText,pendingIntent);
-            //And here the onClick for the items (Look at MyWidgetRemoteViewsFactory.getViewAt())
             views.setPendingIntentTemplate(R.id.widgetListView, pendingIntent);
 
             //Set the textview to show when the widget is empty

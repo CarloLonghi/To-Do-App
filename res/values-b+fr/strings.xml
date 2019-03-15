@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">ToDo</string>
     <string name="add">Ajoutes</string>
     <string name="newListHint">Nouvelle liste&#8230;</string>
     <string name="voidMenuActivity">Il n\'y a pas de liste\nAjouter un!</string>

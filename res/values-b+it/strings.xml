@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ToDo</string>
+    <string name="app_name">OneUp</string>
     <string name="add">Aggiungi</string>
     <string name="newListHint">Nuova lista&#8230;</string>
     <string name="voidMenuActivity">Non c\'è nessuna lista\nAggiungine una!</string>

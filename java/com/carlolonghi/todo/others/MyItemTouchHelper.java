@@ -6,7 +6,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.carlolonghi.todo.adapters.ItemsAdapter;
 
-//This class regulates the behaviour of the items when are moved or swiped
+// This class regulates the behaviour of the items when are moved or swiped
 public class MyItemTouchHelper extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter myAdapter;

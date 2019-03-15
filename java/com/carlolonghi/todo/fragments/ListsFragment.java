@@ -29,7 +29,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView.Adapter bmListsAdapter;
     private ViewGroup rootView;
 
-    //The spacing between lists in the recyclerview
+    // The spacing between lists in the recyclerview
     private final int SPACE_BETWEEN_LISTS=40;
 
     @Override
@@ -47,18 +47,15 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         listsRecyclerView.setHasFixedSize(true);
         bmListsRecyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
         RecyclerView.LayoutManager listsLayoutManager = new LinearLayoutManager(this.getContext());
         listsRecyclerView.setLayoutManager(listsLayoutManager);
         RecyclerView.LayoutManager bmListsLayoutManager=new LinearLayoutManager(this.getContext());
         bmListsRecyclerView.setLayoutManager(bmListsLayoutManager);
 
-        //Gets the ViewModel that reads and holds the application data and read the Map of items
         model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
         checkIfItemsAreEmpty();
 
-        // specify an adapter (see also next example)
         listsAdapter = new ListsAdapter(model.getKeySet());
         ((ListsAdapter) listsAdapter).setModel(model);
         ((ListsAdapter) listsAdapter).setMyLayoutManager(listsLayoutManager);
@@ -87,7 +84,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         listsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
         bmListsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(SPACE_BETWEEN_LISTS));
 
-        //Sets the listener for the button used to add a new list
+        // Sets the listener for the button used to add a new list
         Button addNewButton=(Button)rootView.findViewById(R.id.newListButton);
         addNewButton.setOnClickListener(this);
 
@@ -98,22 +95,19 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
     public void onResume(){
         super.onResume();
 
-        //Loads the updated items from file
         this.model.loadItems();
 
         enableAddButton();
     }
 
-    //Restores the activity from the Instance State
     public void onActivityCreated(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState!=null)
             ((ListsAdapter)listsAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
     }
 
-    //The listener for the button used to get the dialog to add a new list
+    // The listener for the button used to get the dialog to add a new list
     public void onClick(final View addButton) {
         disableAddButton();
         listsRecyclerView.setVisibility(View.VISIBLE);
@@ -137,7 +131,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         addButton.setClickable(false);
     }
 
-    //Manages the context menu choices
+    // Manages the context menu choices
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         final Button contextMenuList=((ListsAdapter)listsAdapter).getContextMenuList();
@@ -180,7 +174,7 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         return true;
     }
 
-    //Regulates the presence of the "Others" title and of the empty Activity string
+    // Regulates the presence of the "Others" title and of the empty Activity string
     private void checkIfItemsAreEmpty(){
         if(model.itemsIsEmpty() && model.bmItemsIsEmpty()){
             listsRecyclerView.setVisibility(View.GONE);

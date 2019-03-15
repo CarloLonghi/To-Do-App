@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDo</string>
+    <string name="app_name">OneUp</string>
     <string name="add">Add</string>
     <string name="newListHint">New list title&#8230;</string>
     <string name="voidMenuActivity">There is no list here\nTry to add a new one!</string>

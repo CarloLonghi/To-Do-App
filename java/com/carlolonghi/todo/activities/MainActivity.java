@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
@@ -69,11 +68,4 @@ public class MainActivity extends AppCompatActivity {
                 return getResources().getString(R.string.listsFragmentTitle);
         }
     }
-
-    public void onPause(){
-        //model.updateItemsOnFile(this.getBaseContext());
-
-        super.onPause();
-    }
-
 }

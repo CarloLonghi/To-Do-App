@@ -33,7 +33,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private String editingText;
     private ItemsViewModel model;
     private List<String> items;
-    private Button contextMenuList;
+    private Button contextMenuList; // this variable keeps the button that has a contextmenu attached
     private RecyclerView.LayoutManager myLayoutManager;
     private Context context;
 
@@ -48,7 +48,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             myListButton.setOnCreateContextMenuListener(this);
         }
 
-        //Creates the context menu when the lists are long-pressed
+        // Creates the context menu when the lists are long-pressed
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
             menu.add(0, v.getId(), 0, "Delete");
@@ -106,9 +106,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 AddNewListHolder vh1=new AddNewListHolder(addNew);
                 Button addButton=(Button)addNew.findViewById(R.id.addNewButton);
                 addButton.setOnClickListener(new AddNewClickListener());
-                //This block of instructions regulates the correct behaviour of the EditText used to add the new items
-                //the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
-                //the item is added to the list as the Add button has been pressed
+                // This block of instructions regulates the correct behaviour of the EditText used to add the new items
+                // the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
+                // the item is added to the list as the Add button has been pressed
                 EditText newListText=(EditText)addNew.findViewById(R.id.addNewText);
                 newListText.setHorizontallyScrolling(false);
                 newListText.setMaxLines(Integer.MAX_VALUE);
@@ -118,18 +118,15 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
-                                //Calls the onClick of the Add button if the newLine is pressed
                                 Button button=(Button)((LinearLayout)v.getParent()).getChildAt(1);
-                                //(new ListsAdapter.AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
                                 (new ListsAdapter.AddNewClickListener()).onClick(button);
-                                //onClick(findViewById(R.id.addNewButton));
                                 return true;
                             default:
                                 return false;
                         }
                     }
                 });
-                //Sets the cursor on the edittext and opens the keyboard
+                // Sets the cursor on the edittext and opens the keyboard
                 newListText.requestFocus();
                 Activity activity = (Activity)newListText.getContext();
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -138,10 +135,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
-        //Get element from your dataset at this position
         int itemType=getItemViewType(position);
         if(itemType==NEWLIST_TYPE){
             String text=items.get(position);
@@ -150,7 +145,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    //setPosition(holder.getPosition());
                     setContextMenuList((Button)v);
                     return false;
                 }
@@ -166,24 +160,20 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    //Used to set the variable contextMenuList when a list has been longpressed
     private void setContextMenuList(Button button){
         this.contextMenuList=button;
     }
 
-    //Delete the button previously stored for the contextmenu
     public void deleteContextMenuList(){
         Button b=new Button(this.context);
         b.setText("");
         this.contextMenuList=b;
     }
 
-    //Functions used to get the Button which has been longpressed
     public Button getContextMenuList(){
         return this.contextMenuList;
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return items.size();
@@ -233,7 +223,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    //Used to remove the field that adds a new list
+    // Used to remove the field that adds a new list
     public void removeAddNew(){
         if(isAddNewPresent){
             model.removeList("ADDNEW");
@@ -243,7 +233,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    //Function used to edit the text of the field used for the new lists
+    // Function used to edit the text of the field used for the new lists
     public void setEditingText(String text){
         if(isAddNewPresent){
             EditText editText=(EditText) myLayoutManager.getChildAt(getItemCount()-1);
