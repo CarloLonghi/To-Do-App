@@ -210,7 +210,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             else {
                 String text=editText.getText().toString();
                 removeAddNew();
-                model.addList(text);
+                model.addList(text.toUpperCase());
                 items.add(text.toUpperCase());
                 setAddNewPresent(false);
                 ((RecyclerView) container.getParent()).getAdapter().notifyDataSetChanged();

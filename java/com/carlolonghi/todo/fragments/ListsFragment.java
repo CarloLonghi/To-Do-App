@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -172,6 +173,10 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((BMListsAdapter)bmListsAdapter).deleteContextMenuList();
 
         return true;
+    }
+
+    private void undoDelete(){
+
     }
 
     // Regulates the presence of the "Others" title and of the empty Activity string
