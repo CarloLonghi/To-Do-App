@@ -55,8 +55,8 @@ public class TodaysFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        EditText editText=(EditText)rootView.findViewById(R.id.addNewText);
-        savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
+        //EditText editText=(EditText)rootView.findViewById(R.id.addNewText);
+        //savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
 
         super.onSaveInstanceState(savedInstanceState);
     }

@@ -91,7 +91,6 @@ public class ItemsViewModel extends AndroidViewModel {
     }
 
     public void updateItemsOnFile(Context context){
-        todaysItems=new TodayItems();
         try{
             FileOutputStream outputStream = context.openFileOutput("items.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
@@ -104,7 +103,6 @@ public class ItemsViewModel extends AndroidViewModel {
     }
 
     public void updateBookmarkItemsOnFile(Context context){
-        todaysItems=new TodayItems();
         try{
             FileOutputStream outputStream = context.openFileOutput("bookmarkitems.dat", MODE_PRIVATE);
             ObjectOutputStream writer = new ObjectOutputStream(outputStream);
