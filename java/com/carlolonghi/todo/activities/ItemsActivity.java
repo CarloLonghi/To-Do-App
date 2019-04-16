@@ -86,8 +86,14 @@ public class ItemsActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
 
-        model.updateItems(listTitle,((ItemsAdapter)myAdapter).getItems());
-        model.updateItemsOnFile(this.getBaseContext());
+        if(model.hasBookmark(listTitle)){
+            model.updateBookmarkItems(listTitle,((ItemsAdapter)myAdapter).getItems());
+            model.updateBookmarkItemsOnFile(this.getBaseContext());
+        }
+        else {
+            model.updateItems(listTitle, ((ItemsAdapter) myAdapter).getItems());
+            model.updateItemsOnFile(this.getBaseContext());
+        }
     }
 }
 

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.carlolonghi.todo.adapters.ItemsAdapter;
 import com.carlolonghi.todo.adapters.ListsAdapter;
 import com.carlolonghi.todo.data.ItemsViewModel;
 import com.carlolonghi.todo.adapters.BMListsAdapter;
@@ -173,10 +174,6 @@ public class ListsFragment extends Fragment implements View.OnClickListener {
         ((BMListsAdapter)bmListsAdapter).deleteContextMenuList();
 
         return true;
-    }
-
-    private void undoDelete(){
-
     }
 
     // Regulates the presence of the "Others" title and of the empty Activity string
