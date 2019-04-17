@@ -118,7 +118,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
-                                Button button=(Button)((LinearLayout)v.getParent()).getChildAt(1);
+                                Button button=(Button)((LinearLayout)v.getParent()).getChildAt(0);
                                 (new ListsAdapter.AddNewClickListener()).onClick(button);
                                 return true;
                             default:
