@@ -1,6 +1,7 @@
 package com.carlolonghi.todo.adapters;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -203,6 +204,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setEditingText(String editingText){
         this.editingText=editingText;
+    }
+
+    public void deleteSelectedItems() {
+        items.removeAllCheckedItems();
+        this.notifyDataSetChanged();
     }
 
     private class AddNewClickListener implements View.OnClickListener{

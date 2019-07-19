@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
@@ -59,11 +60,11 @@ public class ItemsActivity extends AppCompatActivity {
 
 
     // The function that regulates the behaviour of the back button that is on top-left of the screen
-    public boolean onOptionsItemSelected(MenuItem item){
+    /*public boolean onOptionsItemSelected(MenuItem item){
         // The button make the app go back to MainActivity
         finish();
         return true;
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -80,6 +81,25 @@ public class ItemsActivity extends AppCompatActivity {
         this.listTitle = savedInstanceState.getString("LIST_TITLE");
         ((ItemsAdapter)myAdapter).setEditingText(savedInstanceState.getString("EDITING_TEXT"));
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.delete_selected_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.delete:
+                ((ItemsAdapter)myAdapter).deleteSelectedItems();
+                break;
+            default:
+                finish();
+                break;
+        }
+        return true;
     }
 
     @Override

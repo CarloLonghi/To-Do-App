@@ -13,5 +13,6 @@
     <string name="emptyWidget">Nothing to do today!</string>
     <string name="todayFragmentTitle">Today</string>
     <string name="listsFragmentTitle">Lists</string>
+    <string name="deletedCheckedItemsMenu">Delete Selected Items</string>
 
 </resources>

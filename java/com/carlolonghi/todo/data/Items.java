@@ -34,6 +34,12 @@ public class Items implements Serializable{
         }
     }
 
+    public void removeAllCheckedItems(){
+        while(checkedItems.size()>0){
+            checkedItems.remove(checkedItems.size()-1);
+        }
+    }
+
     public void addCheckedItem(String item){
         checkedItems.add(item);
     }
