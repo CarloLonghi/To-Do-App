@@ -125,7 +125,6 @@ public class TodayItemsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         if(itemType==ADDNEW_TYPE){
             EditText editText=((EditText)((TodayItemsAdapter.AddNewItemViewHolder)holder).newItemLayout.getChildAt(0));
             editText.setText(editingText);
-            editText.setSelection(editingText.length());
         }
         else if(itemType==NEWITEM_TYPE){
             final ItemWithDate item=items.getNonCheckedItems().get(position);
