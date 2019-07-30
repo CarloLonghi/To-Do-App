@@ -70,7 +70,10 @@ public class ItemsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("LIST_TITLE", this.listTitle);
         EditText editText=(EditText)findViewById(R.id.addNewText);
-        savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
+        if(editText.getText().equals(""))
+            savedInstanceState.putString("EDITING_TEXT","");
+        else
+            savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
 
         super.onSaveInstanceState(savedInstanceState);
     }
