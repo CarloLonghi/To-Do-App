@@ -84,13 +84,13 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case ADDNEW_TYPE:
                 final LinearLayout addNew=(LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.add_new_reverse_layout,parent,false);
                 AddNewItemViewHolder vh2=new AddNewItemViewHolder(addNew);
-                Button addNewButton=(Button)addNew.findViewById(R.id.addNewButton);
+                Button addNewButton=(Button)addNew.findViewById(R.id.reverseAddNewButton);
                 addNewButton.setOnClickListener(new AddNewClickListener());
 
                 // This block of instructions regulates the correct behaviour of the EditText used to add the new items
                 // the text goes newline automatically when gets to the end of it and when the newline button on the keyboard is pressed
                 // the item is added to the list as the Add button has been pressed
-                EditText newItemText=(EditText)addNew.findViewById(R.id.addNewText);
+                EditText newItemText=(EditText)addNew.findViewById(R.id.reverseAddNewText);
                 newItemText.setHorizontallyScrolling(false);
                 newItemText.setMaxLines(Integer.MAX_VALUE);
                 newItemText.setRawInputType(InputType.TYPE_CLASS_TEXT);
@@ -99,7 +99,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         switch(actionId){
                             case EditorInfo.IME_ACTION_DONE:
-                                (new AddNewClickListener()).onClick(addNew.findViewById(R.id.addNewButton));
+                                (new AddNewClickListener()).onClick(addNew.findViewById(R.id.reverseAddNewButton));
                                 return true;
                             default:
                                 return false;

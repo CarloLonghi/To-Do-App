@@ -66,17 +66,15 @@ public class ItemsActivity extends AppCompatActivity {
         return true;
     }*/
 
-    @Override
+/*    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("LIST_TITLE", this.listTitle);
-        EditText editText=(EditText)findViewById(R.id.addNewText);
-        if(editText.getText().equals(""))
-            savedInstanceState.putString("EDITING_TEXT","");
-        else
-            savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
+        EditText editText=(EditText)findViewById(R.id.reverseAddNewText);
+        savedInstanceState.putString("EDITING_TEXT",editText.getText().toString());
 
         super.onSaveInstanceState(savedInstanceState);
     }
+*/
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
