@@ -1,7 +1,6 @@
-package com.carlolonghi.todo.adapters;
+package com.carlolonghi.oneup.adapters;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -21,10 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.carlolonghi.todo.activities.ItemsActivity;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.others.ListButtonListener;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.activities.ItemsActivity;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.others.ListButtonListener;
+import com.carlolonghi.oneup.R;
 
 import java.util.List;
 

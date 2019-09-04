@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.adapters;
+package com.carlolonghi.oneup.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,11 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.others.ListButtonListener;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.others.ListButtonListener;
+import com.carlolonghi.oneup.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BMListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,10 +1,10 @@
-package com.carlolonghi.todo.others;
+package com.carlolonghi.oneup.others;
 
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
-import com.carlolonghi.todo.activities.ItemsActivity;
+import com.carlolonghi.oneup.activities.ItemsActivity;
 
 //This is the listener for the lists' buttons
 public class ListButtonListener implements View.OnClickListener {

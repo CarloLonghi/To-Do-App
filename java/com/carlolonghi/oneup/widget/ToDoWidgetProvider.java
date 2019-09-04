@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.widget;
+package com.carlolonghi.oneup.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import com.carlolonghi.todo.R;
-import com.carlolonghi.todo.activities.MainActivity;
+import com.carlolonghi.oneup.R;
+import com.carlolonghi.oneup.activities.MainActivity;
 
 
 public class ToDoWidgetProvider extends AppWidgetProvider {

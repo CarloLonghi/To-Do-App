@@ -1,10 +1,9 @@
-package com.carlolonghi.todo.fragments;
+package com.carlolonghi.oneup.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,11 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.carlolonghi.todo.adapters.ItemsAdapter;
-import com.carlolonghi.todo.adapters.ListsAdapter;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.adapters.BMListsAdapter;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.adapters.ListsAdapter;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.adapters.BMListsAdapter;
+import com.carlolonghi.oneup.R;
 
 
 public class ListsFragment extends Fragment implements View.OnClickListener {

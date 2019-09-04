@@ -1,9 +1,7 @@
-package com.carlolonghi.todo.widget;
+package com.carlolonghi.oneup.widget;
 
 import android.content.Intent;
 import android.widget.RemoteViewsService;
-
-import com.carlolonghi.todo.widget.MyWidgetRemoteViewsFactory;
 
 public class MyWidgetRemoteViewsService extends RemoteViewsService {
     @Override

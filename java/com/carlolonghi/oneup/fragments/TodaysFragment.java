@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.fragments;
+package com.carlolonghi.oneup.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -10,12 +10,11 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
-import com.carlolonghi.todo.adapters.TodayItemsAdapter;
-import com.carlolonghi.todo.others.MyItemTouchHelper;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.adapters.TodayItemsAdapter;
+import com.carlolonghi.oneup.others.MyItemTouchHelper;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.R;
 
 public class TodaysFragment extends Fragment {
 

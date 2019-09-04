@@ -1,7 +1,6 @@
-package com.carlolonghi.todo.adapters;
+package com.carlolonghi.oneup.adapters;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.carlolonghi.todo.data.Items;
-import com.carlolonghi.todo.others.MyItemTouchHelper;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.data.Items;
+import com.carlolonghi.oneup.others.MyItemTouchHelper;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.R;
 
 import java.util.Collections;
 

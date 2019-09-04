@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.carlolonghi.todo">
+    package="com.carlolonghi.oneup">
 
 
     <application
@@ -13,7 +13,7 @@
         android:theme="@style/ToDoAppTheme">
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.carlolonghi.oneup.activities.MainActivity"
             android:theme="@style/ToDoAppTheme"
             android:launchMode="singleTop">
             <intent-filter>
@@ -24,12 +24,12 @@
         </activity>
 
         <activity
-            android:name=".activities.ItemsActivity"
-            android:parentActivityName=".activities.MainActivity"
+            android:name="com.carlolonghi.oneup.activities.ItemsActivity"
+            android:parentActivityName="com.carlolonghi.oneup.activities.MainActivity"
             android:theme="@style/ToDoAppTheme">
         </activity>
 
-        <receiver android:name=".widget.ToDoWidgetProvider">
+        <receiver android:name="com.carlolonghi.oneup.widget.ToDoWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -39,7 +39,7 @@
                 android:resource="@layout/widget_provider" />
         </receiver>
 
-        <service android:name=".widget.MyWidgetRemoteViewsService"
+        <service android:name="com.carlolonghi.oneup.widget.MyWidgetRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>

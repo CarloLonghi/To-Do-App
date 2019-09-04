@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.activities;
+package com.carlolonghi.oneup.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,9 +9,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.carlolonghi.todo.fragments.ListsFragment;
-import com.carlolonghi.todo.fragments.TodaysFragment;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.fragments.ListsFragment;
+import com.carlolonghi.oneup.fragments.TodaysFragment;
+import com.carlolonghi.oneup.R;
 
 public class MainActivity extends AppCompatActivity {
 

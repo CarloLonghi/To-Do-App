@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.adapters;
+package com.carlolonghi.oneup.adapters;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -21,12 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.carlolonghi.todo.others.MyItemTouchHelper;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.R;
-import com.carlolonghi.todo.data.ItemWithDate;
-import com.carlolonghi.todo.data.TodayItems;
-import com.carlolonghi.todo.widget.ToDoWidgetProvider;
+import com.carlolonghi.oneup.others.MyItemTouchHelper;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.R;
+import com.carlolonghi.oneup.data.ItemWithDate;
+import com.carlolonghi.oneup.data.TodayItems;
+import com.carlolonghi.oneup.widget.ToDoWidgetProvider;
 
 import java.util.Calendar;
 import java.util.Collections;

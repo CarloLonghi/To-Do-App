@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.activities;
+package com.carlolonghi.oneup.activities;
 
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -10,12 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 
-import com.carlolonghi.todo.adapters.ItemsAdapter;
-import com.carlolonghi.todo.others.MyItemTouchHelper;
-import com.carlolonghi.todo.data.ItemsViewModel;
-import com.carlolonghi.todo.R;
+import com.carlolonghi.oneup.adapters.ItemsAdapter;
+import com.carlolonghi.oneup.others.MyItemTouchHelper;
+import com.carlolonghi.oneup.data.ItemsViewModel;
+import com.carlolonghi.oneup.R;
 
 
 public class ItemsActivity extends AppCompatActivity {

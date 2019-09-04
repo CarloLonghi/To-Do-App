@@ -1,4 +1,4 @@
-package com.carlolonghi.todo.widget;
+package com.carlolonghi.oneup.widget;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,9 +6,9 @@ import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.carlolonghi.todo.R;
-import com.carlolonghi.todo.activities.MainActivity;
-import com.carlolonghi.todo.data.TodayItems;
+import com.carlolonghi.oneup.R;
+import com.carlolonghi.oneup.activities.MainActivity;
+import com.carlolonghi.oneup.data.TodayItems;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
